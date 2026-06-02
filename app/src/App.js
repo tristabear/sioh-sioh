@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import './index.css';

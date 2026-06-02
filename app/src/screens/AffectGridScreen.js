@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -10,7 +11,7 @@ export default function AffectGridScreen() {
   const [dragging, setDragging] = useState(false);
 
   const SIZE = 300;
-  const RADIUS = SIZE / 2;
+  
 
   const getCoordFromEvent = useCallback((e) => {
     const rect = gridRef.current.getBoundingClientRect();

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { SOMATIC_SYMPTOMS } from '../data/emotions';

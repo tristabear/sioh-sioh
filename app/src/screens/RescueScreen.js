@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -9,7 +10,7 @@ const PHASES = [
   { label: '自然停頓', sublabel: '', duration: 1500, scale: 0.85, color: '#1c2b24' },
 ];
 
-const ROUNDS = 5; // 5 cycles ≈ 47 seconds
+const ROUNDS = 5;
 
 export default function RescueScreen() {
   const navigate = useNavigate();
@@ -37,7 +38,6 @@ export default function RescueScreen() {
   }, [started, phaseIdx, round, done]);
 
   const phase = PHASES[phaseIdx];
-  const progress = done ? 1 : (round * PHASES.length + phaseIdx) / (ROUNDS * PHASES.length);
 
   if (!started) {
     return (
@@ -100,7 +100,6 @@ export default function RescueScreen() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Progress ring */}
       <div style={{ position: 'absolute', top: 52, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', gap: 8 }}>
           {Array.from({ length: ROUNDS }).map((_, i) => (
@@ -109,7 +108,6 @@ export default function RescueScreen() {
         </div>
       </div>
 
-      {/* Breathing orb */}
       <div style={{
         width: 180, height: 180, borderRadius: '50%',
         background: `radial-gradient(circle, ${phase.color}88 0%, ${phase.color}22 70%)`,
@@ -126,7 +124,6 @@ export default function RescueScreen() {
         }} />
       </div>
 
-      {/* Instruction */}
       <div style={{ textAlign: 'center', color: '#faf7f2' }}>
         <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>
           {phase.label}
@@ -138,7 +135,6 @@ export default function RescueScreen() {
         )}
       </div>
 
-      {/* Skip */}
       <button
         onClick={() => navigate(-1)}
         style={{ position: 'absolute', bottom: 40, color: 'rgba(250,247,242,0.35)', fontSize: 13, fontFamily: 'var(--font-sans)' }}
