@@ -96,7 +96,6 @@ export default function SavoringScreen() {
                 className="fade-up"
                 style={{
                   animationDelay: `${i * 0.05}s`,
-                  opacity: 0,
                   padding: '14px 16px',
                   borderRadius: 'var(--radius-sm)',
                   background: selectedStrategy === s.id ? 'var(--forest)' : '#fff',
@@ -120,7 +119,7 @@ export default function SavoringScreen() {
           </div>
         </div>
 
-        <button className="btn-primary fade-up stagger-2" style={{ opacity: 0 }} onClick={handleFinish}>
+        <button className="btn-primary fade-up stagger-2" onClick={handleFinish}>
           完成今天的練習 ✓
         </button>
       </div>

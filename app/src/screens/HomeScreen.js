@@ -11,30 +11,31 @@ export default function HomeScreen() {
 
   return (
     <div className="screen" style={{ padding: '0 0 100px 0' }}>
-      {/* Header */}
+      {/* Header — full-bleed breakout */}
       <div style={{
         background: 'var(--forest)',
-        padding: '56px 28px 36px',
         position: 'relative',
         overflow: 'hidden',
+        width: '100vw',
+        marginLeft: 'calc(50% - 50vw)',
       }}>
         {/* Decorative circles */}
         <div style={{
           position: 'absolute', right: -40, top: -40,
           width: 200, height: 200, borderRadius: '50%',
-          background: 'rgba(201,125,80,0.12)',
+          background: 'rgba(223,145,75,0.12)',
         }} />
         <div style={{
           position: 'absolute', right: 40, top: 30,
           width: 100, height: 100, borderRadius: '50%',
-          background: 'rgba(122,174,142,0.1)',
+          background: 'rgba(69,130,84,0.1)',
         }} />
-        {/* Breathing orb */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Inner content constrained to 480px */}
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '56px 28px 36px', position: 'relative', zIndex: 1 }}>
           <div style={{
             width: 56, height: 56,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, #e8b88a 0%, #c97d50 100%)',
+            background: 'radial-gradient(circle, #E9AD63 0%, #DF914B 100%)',
             marginBottom: 20,
             animation: 'pulse 4s ease-in-out infinite',
           }} />

@@ -92,7 +92,6 @@ export default function SRWNEScreen() {
               className="fade-up"
               style={{
                 animationDelay: `${i * 0.06}s`,
-                opacity: 0,
                 padding: '16px 20px',
                 borderRadius: 'var(--radius-sm)',
                 background: answers[prompt.id]?.optionId === opt.id ? 'var(--forest)' : '#fff',

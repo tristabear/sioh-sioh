@@ -11,7 +11,8 @@ export default function AffectGridScreen() {
   const [dragging, setDragging] = useState(false);
 
   const SIZE = 300;
-  
+  const RADIUS = SIZE / 2;
+
 
   const getCoordFromEvent = useCallback((e) => {
     const rect = gridRef.current.getBoundingClientRect();
@@ -96,24 +97,24 @@ export default function AffectGridScreen() {
           >
             <defs>
               <radialGradient id="fog" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#e8ddd0" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#c9b89a" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#F3DFCB" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#dbb98a" stopOpacity="0.9" />
               </radialGradient>
               {/* Quadrant fills */}
               <linearGradient id="q-tl" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7aae8e" stopOpacity="0.15" />
+                <stop offset="0%" stopColor="#458254" stopOpacity="0.15" />
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
               <linearGradient id="q-tr" x1="100%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#c97d50" stopOpacity="0.15" />
+                <stop offset="0%" stopColor="#DF914B" stopOpacity="0.15" />
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
               <linearGradient id="q-bl" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#1c2b24" stopOpacity="0.12" />
+                <stop offset="0%" stopColor="#1c3828" stopOpacity="0.12" />
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
               <linearGradient id="q-br" x1="100%" y1="100%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="#8a7a6a" stopOpacity="0.12" />
+                <stop offset="0%" stopColor="#8a6540" stopOpacity="0.12" />
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
             </defs>
@@ -127,8 +128,8 @@ export default function AffectGridScreen() {
             <path d={`M${RADIUS},${RADIUS} L${RADIUS},${SIZE} A${RADIUS},${RADIUS} 0 0,1 0,${RADIUS} Z`} fill="url(#q-br)" />
 
             {/* Cross hair */}
-            <line x1={RADIUS} y1={10} x2={RADIUS} y2={SIZE-10} stroke="rgba(90,82,72,0.15)" strokeWidth="1" strokeDasharray="4,4" />
-            <line x1={10} y1={RADIUS} x2={SIZE-10} y2={RADIUS} stroke="rgba(90,82,72,0.15)" strokeWidth="1" strokeDasharray="4,4" />
+            <line x1={RADIUS} y1={10} x2={RADIUS} y2={SIZE-10} stroke="rgba(184,116,50,0.2)" strokeWidth="1" strokeDasharray="4,4" />
+            <line x1={10} y1={RADIUS} x2={SIZE-10} y2={RADIUS} stroke="rgba(184,116,50,0.2)" strokeWidth="1" strokeDasharray="4,4" />
 
             {/* Dot */}
             {dotX !== null && (

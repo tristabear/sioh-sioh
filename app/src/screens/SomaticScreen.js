@@ -53,7 +53,6 @@ export default function SomaticScreen() {
               alignItems: 'center',
               gap: 10,
               animationDelay: `${i * 0.04}s`,
-              opacity: 0,
               width: '100%',
               justifyContent: 'flex-start',
               ...(selected.includes(s.id) && s.id !== 'none' ? {
@@ -67,7 +66,6 @@ export default function SomaticScreen() {
             }}
             onClick={() => toggle(s.id)}
           >
-            <span style={{ fontSize: 22 }}>{s.icon}</span>
             <span style={{ fontSize: 13, fontWeight: selected.includes(s.id) ? 700 : 400 }}>{s.label}</span>
           </button>
         ))}

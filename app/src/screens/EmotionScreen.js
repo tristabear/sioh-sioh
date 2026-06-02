@@ -60,7 +60,6 @@ export default function EmotionScreen() {
                 className="fade-up"
                 style={{
                   animationDelay: `${i * 0.035}s`,
-                  opacity: 0,
                   padding: '10px 18px',
                   borderRadius: 40,
                   fontSize: 15,
