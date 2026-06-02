@@ -97,7 +97,7 @@ sioh-sioh/
 ```
 
 **設計規格書線上預覽：**  
-👉 `https://[your-username].github.io/sioh-sioh/`
+👉 `https://tristabear.github.io/sioh-sioh/`
 
 ---
 
