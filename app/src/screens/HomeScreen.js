@@ -23,19 +23,19 @@ export default function HomeScreen() {
         <div style={{
           position: 'absolute', right: -40, top: -40,
           width: 200, height: 200, borderRadius: '50%',
-          background: 'rgba(227,83,54,0.15)',
+          background: 'rgba(200,111,89,0.18)',
         }} />
         <div style={{
           position: 'absolute', right: 40, top: 30,
           width: 100, height: 100, borderRadius: '50%',
-          background: 'rgba(153,136,161,0.15)',
+          background: 'rgba(58,107,126,0.15)',
         }} />
         {/* Inner content constrained to 480px */}
         <div style={{ maxWidth: 480, margin: '0 auto', padding: '56px 28px 36px', position: 'relative', zIndex: 1 }}>
           <div style={{
             width: 56, height: 56,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, #FFD3AC 0%, #E35336 100%)',
+            background: 'radial-gradient(circle, #D9A05B 0%, #C86F59 100%)',
             marginBottom: 20,
             animation: 'pulse 4s ease-in-out infinite',
           }} />

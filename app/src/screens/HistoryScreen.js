@@ -72,7 +72,7 @@ function EntryCard({ entry, index }) {
             </span>
           ))}
           {entry.srwneResult && (
-            <span style={{ fontSize: 11, fontFamily: 'var(--font-sans)', color: entry.srwneResult === 'autonomous' ? 'var(--sage)' : 'var(--clay)', background: entry.srwneResult === 'autonomous' ? 'rgba(153,136,161,0.12)' : 'rgba(227,83,54,0.12)', padding: '3px 8px', borderRadius: 20 }}>
+            <span style={{ fontSize: 11, fontFamily: 'var(--font-sans)', color: entry.srwneResult === 'autonomous' ? 'var(--sage)' : 'var(--clay)', background: entry.srwneResult === 'autonomous' ? 'rgba(58,107,126,0.12)' : 'rgba(200,111,89,0.12)', padding: '3px 8px', borderRadius: 20 }}>
               {entry.srwneResult === 'autonomous' ? '自主選擇' : entry.srwneResult === 'controlled' ? '被迫沉默' : ''}
             </span>
           )}

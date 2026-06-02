@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
 const PHASES = [
-  { label: '用鼻子吸氣', sublabel: '第一次吸氣', duration: 2000, scale: 1.3, color: '#9988A1' },
-  { label: '再吸一口氣', sublabel: '把肺吸滿', duration: 1000, scale: 1.5, color: '#9988A1' },
-  { label: '慢慢從嘴巴吐氣', sublabel: '盡量吐長一點', duration: 5000, scale: 0.85, color: '#8A2B0E' },
-  { label: '自然停頓', sublabel: '', duration: 1500, scale: 0.85, color: '#8A2B0E' },
+  { label: '用鼻子吸氣', sublabel: '第一次吸氣', duration: 2000, scale: 1.3, color: '#5a8fa3' },
+  { label: '再吸一口氣', sublabel: '把肺吸滿', duration: 1000, scale: 1.5, color: '#5a8fa3' },
+  { label: '慢慢從嘴巴吐氣', sublabel: '盡量吐長一點', duration: 5000, scale: 0.85, color: '#2d5566' },
+  { label: '自然停頓', sublabel: '', duration: 1500, scale: 0.85, color: '#2d5566' },
 ];
 
 const ROUNDS = 5;
@@ -91,7 +91,7 @@ export default function RescueScreen() {
   return (
     <div style={{
       minHeight: '100dvh',
-      background: 'linear-gradient(180deg, var(--forest) 0%, #1a0804 100%)',
+      background: 'linear-gradient(180deg, var(--forest) 0%, #0d2530 100%)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

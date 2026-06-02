@@ -96,7 +96,6 @@ export default function SavoringScreen() {
                 className="fade-up"
                 style={{
                   animationDelay: `${i * 0.05}s`,
-                  opacity: 0,
                   padding: '14px 16px',
                   borderRadius: 'var(--radius-sm)',
                   background: selectedStrategy === s.id ? 'var(--forest)' : '#fff',
@@ -110,7 +109,6 @@ export default function SavoringScreen() {
                 }}
                 onClick={() => setSelectedStrategy(selectedStrategy === s.id ? null : s.id)}
               >
-                <span style={{ fontSize: 22, flexShrink: 0 }}>{s.icon}</span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 2 }}>{s.label}</div>
                   <div style={{ fontSize: 12, fontFamily: 'var(--font-sans)', fontWeight: 300, opacity: 0.75 }}>{s.desc}</div>
@@ -120,7 +118,7 @@ export default function SavoringScreen() {
           </div>
         </div>
 
-        <button className="btn-primary fade-up stagger-2" style={{ opacity: 0 }} onClick={handleFinish}>
+        <button className="btn-primary fade-up stagger-2" onClick={handleFinish}>
           完成今天的練習 ✓
         </button>
       </div>
