@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>惜惜 Sioh-Sioh — 應用程式設計規格書</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body style="margin:0;padding:0;">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const NAV = ["品牌總覽", "系統架構", "使用流程", "功能規格", "科學根據", "市場分析"];
+
+    function App() {
+      const [active, setActive] = useState("品牌總覽");
+
+      return (
+        <div style={{
+          fontFamily: "'Noto Serif TC', 'Georgia', serif",
+          background: "#faf7f2",
+          minHeight: "100vh",
+          color: "#1c1c2e",
+        }}>
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+            * { box-sizing: border-box; }
+            .nav-btn { transition: all 0.2s ease; }
+            .nav-btn:hover { opacity: 1 !important; }
+            .card-hover { transition: box-shadow 0.2s, transform 0.2s; }
+            .card-hover:hover { box-shadow: 0 8px 32px rgba(28,28,46,0.12); transform: translateY(-2px); }
+            @keyframes breathe {
+              0%, 100% { transform: scale(1); opacity: 0.6; }
+              50% { transform: scale(1.18); opacity: 1; }
+            }
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(12px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .fade-in { animation: fadeIn 0.4s ease forwards; }
+            .breathe { animation: breathe 4s ease-in-out infinite; }
+            ::-webkit-scrollbar { width: 4px; height: 4px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #c9a882; border-radius: 4px; }
+          `}</style>
+
+          {/* Header */}
+          <header style={{
+            background: "#1c2b24",
+            color: "#faf7f2",
+            padding: "0 36px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            position: "sticky",
+            top: 0,
+            zIndex: 100,
+            boxShadow: "0 1px 32px rgba(0,0,0,0.22)",
+            height: 64,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ position: "relative", width: 36, height: 36 }}>
+                <div className="breathe" style={{
+                  position: "absolute", inset: 0,
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle, #e8b88a 0%, #c97d50 100%)",
+                }} />
+                <div style={{
+                  position: "absolute", inset: "30%",
+                  borderRadius: "50%",
+                  background: "#1c2b24",
+                }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 6, color: "#faf7f2" }}>惜惜</div>
+                <div style={{ fontSize: 10, color: "rgba(250,247,242,0.5)", letterSpacing: 3, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 300 }}>應用程式設計規格書</div>
+              </div>
+            </div>
+            <nav style={{ display: "flex", gap: 2 }}>
+              {NAV.map(n => (
+                <button key={n} className="nav-btn" onClick={() => setActive(n)} style={{
+                  background: active === n ? "rgba(201,160,130,0.2)" : "transparent",
+                  border: "none",
+                  borderBottom: active === n ? "2px solid #c9a082" : "2px solid transparent",
+                  color: active === n ? "#e8c9a8" : "rgba(250,247,242,0.5)",
+                  padding: "8px 14px",
+                  cursor: "pointer",
+                  fontFamily: "'Noto Sans TC', sans-serif",
+                  fontSize: 13,
+                  fontWeight: active === n ? 700 : 400,
+                  letterSpacing: 1,
+                }}>{n}</button>
+              ))}
+            </nav>
+          </header>
+
+          <main className="fade-in" key={active} style={{ maxWidth: 1120, margin: "0 auto", padding: "52px 28px 100px" }}>
+            {active === "品牌總覽" && <BrandSection />}
+            {active === "系統架構" && <ArchSection />}
+            {active === "使用流程" && <FlowSection />}
+            {active === "功能規格" && <FeatureSection />}
+            {active === "科學根據" && <ScienceSection />}
+            {active === "市場分析" && <MarketSection />}
+          </main>
+        </div>
+      );
+    }
+
+    /* ── 共用元件 ── */
+
+    function SecTitle({ main, sub, desc }) {
+      return (
+        <div style={{ marginBottom: 44 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>
+            <h1 style={{ fontSize: 38, fontWeight: 900, margin: 0, color: "#1c2b24", letterSpacing: 2 }}>{main}</h1>
+            {sub && <span style={{ fontSize: 15, color: "#8a7a6a", fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 300, letterSpacing: 1 }}>{sub}</span>}
+          </div>
+          {desc && <p style={{ fontSize: 14, color: "#5a5248", margin: "14px 0 0", maxWidth: 720, lineHeight: 1.9, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 300 }}>{desc}</p>}
+          <div style={{ marginTop: 18, display: "flex", gap: 6 }}>
+            <div style={{ height: 3, width: 48, background: "#c97d50", borderRadius: 2 }} />
+            <div style={{ height: 3, width: 16, background: "#e8c9a8", borderRadius: 2 }} />
+          </div>
+        </div>
+      );
+    }
+
+    function Card({ children, style = {}, hover = true }) {
+      return (
+        <div className={hover ? "card-hover" : ""} style={{
+          background: "#fff",
+          borderRadius: 18,
+          padding: "28px 32px",
+          boxShadow: "0 2px 18px rgba(28,28,46,0.06)",
+          border: "1px solid rgba(201,160,130,0.15)",
+          ...style,
+        }}>{children}</div>
+      );
+    }
+
+    function Label({ text, color = "#7a9e7e" }) {
+      return (
+        <span style={{
+          display: "inline-block",
+          background: color + "18",
+          color,
+          border: `1px solid ${color}35`,
+          borderRadius: 20,
+          padding: "3px 11px",
+          fontSize: 10,
+          fontFamily: "'Noto Sans TC', sans-serif",
+          fontWeight: 700,
+          letterSpacing: 1.5,
+        }}>{text}</span>
+      );
+    }
+
+    function StatBox({ num, label, note, color }) {
+      return (
+        <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 14, padding: "16px 18px" }}>
+          <div style={{ fontSize: 28, fontWeight: 900, color }}>{num}</div>
+          <div style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "rgba(250,247,242,0.8)", marginTop: 2, fontWeight: 300 }}>{label}</div>
+          {note && <div style={{ fontSize: 10, color: "rgba(250,247,242,0.4)", marginTop: 2, fontFamily: "'Noto Sans TC', sans-serif" }}>{note}</div>}
+        </div>
+      );
+    }
+
+    /* ── 品牌總覽 ── */
+    function BrandSection() {
+      return (
+        <div>
+          <SecTitle
+            main="品牌總覽"
+            sub="Brand Overview"
+            desc="惜惜是一款專為台灣使用者設計的情緒調節數位工具。以神經科學為基礎（情感環形模型、生理嘆息、心率變異回饋），深度適配台灣文化心理學——以身體症狀為入口、規避污名標籤、尊重自主情緒調節。"
+          />
+
+          <Card hover={false} style={{ background: "linear-gradient(135deg, #1c2b24 0%, #2d4a38 100%)", color: "#faf7f2", marginBottom: 28, overflow: "hidden", position: "relative" }}>
+            <div style={{ position: "absolute", right: -40, top: -40, width: 220, height: 220, borderRadius: "50%", background: "rgba(201,125,80,0.12)" }} />
+            <div style={{ position: "absolute", right: 60, top: 40, width: 120, height: 120, borderRadius: "50%", background: "rgba(232,200,168,0.08)" }} />
+            <div style={{ display: "flex", gap: 48, flexWrap: "wrap", alignItems: "center", position: "relative", zIndex: 1 }}>
+              <div style={{ flex: 1, minWidth: 280 }}>
+                <div style={{ fontSize: 80, fontWeight: 900, lineHeight: 1, color: "#e8c9a8", letterSpacing: 8, marginBottom: 6 }}>惜惜</div>
+                <div style={{ fontSize: 14, color: "rgba(232,200,168,0.7)", letterSpacing: 2, marginBottom: 6, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 300 }}>Sioh · Sioh</div>
+                <div style={{ fontSize: 18, fontWeight: 300, color: "rgba(250,247,242,0.85)", marginBottom: 6, letterSpacing: 1 }}>惜惜你的心</div>
+                <div style={{ fontSize: 13, color: "rgba(250,247,242,0.5)", marginBottom: 24, fontFamily: "'Noto Sans TC', sans-serif", fontStyle: "italic" }}>你值得被好好對待</div>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  <Label text="數位情緒工具" color="#c9a082" />
+                  <Label text="台灣在地設計" color="#7aae8e" />
+                  <Label text="文化適配 CBT" color="#c97d50" />
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 260 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                  <StatBox num="18%" label="全球市場年複成長率" note="2025–2030" color="#e8c9a8" />
+                  <StatBox num="38%" label="亞太區市場占比" note="佔全球心理健康App市場" color="#e8c9a8" />
+                  <StatBox num="89%" label="台灣CBT App留存率" note="台灣大學生RCT臨床試驗" color="#e8c9a8" />
+                  <StatBox num="零" label="語音資料上傳雲端" note="裝置端Whisper，完全保護隱私" color="#e8c9a8" />
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card style={{ marginBottom: 28, borderLeft: "5px solid #c9a082" }}>
+            <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#c97d50", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>命名邏輯</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
+              {[
+                { icon: "🗣️", layer: "台語溫柔層", desc: "「惜惜」在台語是安慰語——「惜惜你」＝溫柔地愛護你、心疼你。媽媽對孩子說的話，轉化為App對使用者的態度。" },
+                { icon: "📖", layer: "國語意涵層", desc: "「珍惜」的惜——珍視自己的感受，不輕易否定，不逃避，好好對待自己的心。" },
+                { icon: "🔍", layer: "SEO策略層", desc: "雙字疊詞搜尋辨識度高。搭配副關鍵字「情緒調節App」「台灣心理健康」「身心平衡工具」補強搜尋流量。" },
+                { icon: "🚫", layer: "污名規避層", desc: "完全沒有臨床感。「惜惜」不會讓人聯想到精神科或心理疾病，降低stigma驅動的下載障礙。" },
+              ].map(l => (
+                <div key={l.layer}>
+                  <div style={{ fontSize: 20, marginBottom: 6 }}>{l.icon}</div>
+                  <div style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#1c2b24", marginBottom: 6 }}>{l.layer}</div>
+                  <p style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.8, margin: 0, fontWeight: 300 }}>{l.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20, marginBottom: 28 }}>
+            {[
+              { icon: "🫀", zh: "身體先入門", en: "Somatic Entry Bridge", color: "#c97d50", desc: "從不問「你憂鬱嗎？」，而是問「你現在身體有什麼感覺？」——胸悶、疲倦、心跳加速。以身體為入口，符合台灣文化中身體化（somatization）為情緒表達的主要管道。" },
+              { icon: "⚫", zh: "無標籤情緒座標", en: "Non-Stigmatizing Affect Grid", color: "#2d4a38", desc: "用Russell情感環形模型的二維座標（愉悅度 × 喚起度）取代臨床標籤。點一個點，就觸發神經層面的情感命名（affect labeling）——杏仁核活性自然降低，無需使用任何醫療詞彙。" },
+              { icon: "🌬️", zh: "生理優先穩定", en: "Physiological Rescue First", color: "#7aae8e", desc: "高喚起＋負向情緒狀態，立即啟動生理嘆息（Physiological Sigh）引導動畫——先讓自律神經系統穩定，再進行任何認知層面的介入。科學依據：Huberman & Spiegel 2023 RCT。" },
+              { icon: "🪷", zh: "自主情緒調節", en: "SRWNE Cultural CBT", color: "#c9a082", desc: "以「情緒自我調節的自主性壓抑（SRWNE）」框架重新設計CBT。區分「被迫沉默（有害）」與「出於珍惜關係而選擇不說（保護性）」——這是西方心理學從未做到的台灣本土化。" },
+            ].map(p => (
+              <Card key={p.zh} style={{ borderTop: `4px solid ${p.color}` }}>
+                <div style={{ fontSize: 28, marginBottom: 8 }}>{p.icon}</div>
+                <div style={{ fontSize: 10, fontFamily: "'Noto Sans TC', sans-serif", color: p.color, fontWeight: 700, letterSpacing: 2, marginBottom: 4 }}>{p.en}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, color: "#1c1c2e" }}>{p.zh}</div>
+                <p style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.9, margin: 0, fontWeight: 300 }}>{p.desc}</p>
+              </Card>
+            ))}
+          </div>
+
+          <Card>
+            <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 2, marginBottom: 18 }}>競爭定位分析</div>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif" }}>
+                <thead>
+                  <tr style={{ background: "#faf7f2" }}>
+                    {["功能特色", "惜惜", "沙發心理 CouchSpace", "Calm / Headspace", "Mind Booster Green"].map((h, i) => (
+                      <th key={h} style={{ padding: "11px 16px", textAlign: "left", color: i === 1 ? "#1c2b24" : "#8a7a6a", fontWeight: i === 1 ? 900 : 600, borderBottom: "2px solid #f0e8dc", whiteSpace: "nowrap" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ["身體症狀入口", "✅ 核心設計", "❌ 無", "❌ 無", "❌ 無"],
+                    ["二維情緒座標（環形模型）", "✅ 主要UI", "❌ 無", "❌ 無", "❌ 無"],
+                    ["生理嘆息視覺引導", "✅ 急性介入", "⚠️ 被動音樂", "⚠️ 被動音樂", "❌ 無"],
+                    ["SRWNE文化適配CBT", "✅ 框架原生", "❌ 無", "❌ 無", "⚠️ 部分"],
+                    ["裝置端語音處理（隱私）", "✅ Edge Whisper", "❌ 雲端", "❌ 雲端", "❌ 無"],
+                    ["HRV生物回饋", "✅ 第二階段", "❌ 無", "❌ 無", "❌ 無"],
+                    ["繁體中文原生介面", "✅ 原生", "✅ 原生", "⚠️ 翻譯版", "✅ 原生"],
+                    ["企業B2B模組", "✅ 主要營收", "✅ FitBack案例", "⚠️ 有限", "❌ 無"],
+                  ].map((row, i) => (
+                    <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#fdfaf6" }}>
+                      {row.map((cell, j) => (
+                        <td key={j} style={{
+                          padding: "10px 16px", borderBottom: "1px solid #f5ede3",
+                          color: j === 1 ? "#1c2b24" : "#5a5248",
+                          fontWeight: j === 1 ? 700 : 300,
+                        }}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    /* ── 系統架構 ── */
+    function ArchSection() {
+      return (
+        <div>
+          <SecTitle
+            main="系統架構"
+            sub="System Architecture"
+            desc="三階段治療管線：身體感知 → 生理急救 → 文化適配認知重建。所有語音處理在裝置端完成，確保最高隱私保護。"
+          />
+
+          <Card hover={false} style={{ marginBottom: 28 }}>
+            <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 2, marginBottom: 28 }}>核心治療管線</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 40px 1fr 40px 1fr", gap: 0, alignItems: "start" }}>
+              {[
+                { phase: "第一階段", zh: "身體感知", en: "Somatic Recognition", icon: "🫀", color: "#c97d50",
+                  steps: ["使用者輸入身體症狀（胸悶、疲倦、心悸）", "身體→情緒的映射演算法啟動", "逐步引導內感受（interoception）詞彙", "呈現二維情緒座標供選擇"],
+                  science: "身體化（somatization）是台灣文化中被授權的情緒表達方式（台灣精神醫學文獻）" },
+                { phase: "第二階段", zh: "生理急救", en: "Physiological Rescue", icon: "🌬️", color: "#1c2b24",
+                  steps: ["高喚起＋負向情緒 → 立即啟動生理嘆息動畫", "視覺化1:2吸氣吐氣比例引導（60秒）", "第二階段：HRV追蹤確認副交感神經轉換", "靜息呼吸頻率降低作為生物標記"],
+                  science: "Huberman & Spiegel（2023）Cell Reports Medicine RCT：循環嘆息在急性焦慮舒緩上優於正念冥想" },
+                { phase: "第三階段", zh: "文化認知重建", en: "Cultural CBT", icon: "🪷", color: "#7aae8e",
+                  steps: ["高粒度情感命名（繁體中文詞庫）", "SRWNE評估：被迫沉默 vs 自主選擇", "以關係和諧價值觀為框架的認知重建", "正向情緒保存（Savoring）模組"],
+                  science: "SRWNE量表（Chu等人）：自主性情緒壓抑與焦慮／失眠呈負相關" },
+              ].map((p, i) => (
+                <React.Fragment key={p.phase}>
+                  <div style={{ borderLeft: `4px solid ${p.color}`, paddingLeft: 20 }}>
+                    <div style={{ fontSize: 10, fontFamily: "'Noto Sans TC', sans-serif", color: p.color, fontWeight: 700, letterSpacing: 2 }}>{p.phase}</div>
+                    <div style={{ fontSize: 22, margin: "6px 0 2px" }}>{p.icon}</div>
+                    <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 2 }}>{p.zh}</div>
+                    <div style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: "#8a7a6a", marginBottom: 14 }}>{p.en}</div>
+                    <ul style={{ margin: 0, paddingLeft: 16 }}>
+                      {p.steps.map((s, j) => (
+                        <li key={j} style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#444", marginBottom: 7, lineHeight: 1.7, fontWeight: 300 }}>{s}</li>
+                      ))}
+                    </ul>
+                    <div style={{ marginTop: 14, padding: "10px 12px", background: p.color + "10", borderRadius: 8, fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: p.color, lineHeight: 1.6 }}>
+                      📚 {p.science}
+                    </div>
+                  </div>
+                  {i < 2 && <div key={"arr"+i} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#d0c4b4", fontSize: 24, paddingTop: 60 }}>→</div>}
+                </React.Fragment>
+              ))}
+            </div>
+          </Card>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 28 }}>
+            <Card>
+              <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 2, marginBottom: 18 }}>技術架構</div>
+              {[
+                { layer: "前端框架", tech: "React Native（iOS + Android）", note: "繁體中文 i18n 優先" },
+                { layer: "語音轉文字", tech: "Whisper（裝置端邊緣運算）", note: "零雲端成本，完全隱私保護" },
+                { layer: "自然語言處理", tech: "本地語意解析器", note: "身體症狀 → 情緒候選詞映射" },
+                { layer: "情緒座標", tech: "自訂觸控畫布", note: "二維環形模型座標輸入" },
+                { layer: "呼吸動畫", tech: "Lottie / SVG 動畫", note: "生理嘆息視覺引導" },
+                { layer: "HRV（第二階段）", tech: "Apple Watch / Garmin SDK", note: "共振頻率生物回饋" },
+                { layer: "ML個人化", tech: "裝置端 Core ML / TFLite", note: "DFDLOF 自適應治療路徑" },
+                { layer: "資料隱私", tech: "GDPR對應 + GxP Annex 11", note: "角色權限控制、稽核記錄" },
+              ].map(row => (
+                <div key={row.layer} style={{ display: "flex", gap: 14, marginBottom: 11, alignItems: "flex-start" }}>
+                  <div style={{ minWidth: 90, fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#1c2b24", paddingTop: 2 }}>{row.layer}</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", color: "#1c1c2e" }}>{row.tech}</div>
+                    <div style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: "#9a8a7a", fontWeight: 300 }}>{row.note}</div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+
+            <Card>
+              <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 2, marginBottom: 18 }}>營收架構</div>
+              {[
+                { tier: "免費版", icon: "🌱", color: "#7aae8e", note: "使用者獲取層", features: ["身體症狀登記", "每日3次呼吸練習", "基本情緒座標", "7天情緒記錄"] },
+                { tier: "惜惜＋訂閱版", icon: "🌿", color: "#1c2b24", note: "約NT$299／月", features: ["無限次練習", "完整CBT模組（SRWNE）", "正向情緒保存日記", "HRV穿戴裝置整合", "個人化ML治療路徑"] },
+                { tier: "企業B2B版", icon: "🏢", color: "#c97d50", note: "主要營收來源", features: ["團隊身心健康儀表板", "職業倦怠風險偵測", "醫療事務教育模組", "客製化品牌（如FitBack整合）", "去識別化集體資料分析"] },
+              ].map(t => (
+                <div key={t.tier} style={{ borderRadius: 12, border: `2px solid ${t.color}25`, overflow: "hidden", marginBottom: 14 }}>
+                  <div style={{ background: t.color, padding: "10px 16px", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <span style={{ fontSize: 16, marginRight: 8 }}>{t.icon}</span>
+                      <span style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700 }}>{t.tier}</span>
+                    </div>
+                    <span style={{ fontSize: 10, fontFamily: "'Noto Sans TC', sans-serif", opacity: 0.8 }}>{t.note}</span>
+                  </div>
+                  <div style={{ padding: "12px 16px", display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {t.features.map((f, i) => (
+                      <span key={i} style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", background: "#faf7f2", borderRadius: 6, padding: "3px 8px", fontWeight: 300 }}>· {f}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── 使用流程 ── */
+    function FlowSection() {
+      const [active, setActive] = useState(0);
+
+      const flows = [
+        {
+          title: "急性壓力處理", icon: "🚨", color: "#c97d50",
+          steps: [
+            { num: "1", title: "身體感受登記", desc: "首頁問：「你現在身體有什麼感覺？」\n選項：胸悶、疲倦、心跳加速、頭痛、胃部緊繃、肌肉緊張。\n完全沒有「你憂鬱嗎？」的臨床提問。", ui: "柔和的人體輪廓圖，點選身體部位。沒有文字標籤，只有觸覺回饋。" },
+            { num: "2", title: "情緒座標", desc: "出現二維霧感圓形座標盤：\nX軸 = 愉悅度（不舒服 ← → 舒服）\nY軸 = 喚起度（平靜 ↕ 激活）\n使用者拖曳一個柔和的圓點到目前狀態位置。", ui: "漸層霧感畫布，象限標籤以很淡的方式呈現。放置圓點時有輕柔震動回饋。" },
+            { num: "3", title: "生理急救", desc: "若圓點落在「高喚起＋負向情緒」象限（恐慌、憤怒、急性壓力）：\n立即啟動60秒生理嘆息動畫，不附任何文字說明，就只是呼吸。", ui: "全螢幕深色動畫：兩個膨脹圓（雙次吸氣），一個緩慢收縮（吐氣）。緩慢的鼠尾草綠色脈動。" },
+            { num: "4", title: "情緒命名", desc: "呼吸後：「現在，你的感受有名字嗎？」\n提供80個以上繁體中文情緒詞卡，沒有精神科術語。\n選一個詞＝隱性情感命名（杏仁核活性自然降低）。", ui: "柔和詞卡，以能量層級色調分類。可選擇錄音備註（裝置端Whisper處理）。" },
+            { num: "5", title: "文化認知重建", desc: "App辨識使用者的情緒狀態屬於被迫沉默還是自主選擇（SRWNE評估）。\n重建提問：「你選擇沉默，是因為害怕，還是因為你在乎這段關係？」", ui: "對話式提問風格，不是臨床工作表。透過滑桿或語音回應。" },
+            { num: "6", title: "正向情緒保存", desc: "若練習結束時情緒愉悅度上升：出現Savoring提示。\n「這個瞬間值得記住。你想用什麼方式保存它？」\n對應10種Savoring策略。", ui: "日記卡片、語音備忘錄、或「傳給一個人」提示（人際資本化策略）。" },
+          ],
+        },
+        {
+          title: "日常健康登記", icon: "🌿", color: "#7aae8e",
+          steps: [
+            { num: "1", title: "晨間登記（2分鐘）", desc: "快速點選身體部位（最多3個）。\n情緒座標定位。\n今日意圖設定——以關係框架呈現：「今天你想為誰好好照顧自己？」", ui: "最簡化，每步驟全螢幕單一互動。完成最多3次點擊。" },
+            { num: "2", title: "微型練習", desc: "依據前一天情緒模式，ML推薦個人化練習。\n從以下選取：生理嘆息、3分鐘Savoring日記、自主情緒調節反思、感恩人際資本化。", ui: "單一卡片附60–180秒計時器。非懲罰性的連續練習指標。" },
+            { num: "3", title: "情緒趨勢回顧", desc: "每週情緒環形熱圖，顯示情緒座標軌跡。\n疊加身體症狀模式。\n洞察提示：「你這週在高能量愉悅區的時間比上週多了30%。」", ui: "圓形熱力圖，不用長條圖。暖土色調呈現。" },
+          ],
+        },
+        {
+          title: "企業B2B流程", icon: "🏢", color: "#1c2b24",
+          steps: [
+            { num: "1", title: "員工入口", desc: "企業品牌識別整合。\nHR無法看到個人資料。\n入職說明清楚解釋資料保護機制（這是台灣使用者參與的關鍵信任門檻）。", ui: "企業Logo + 惜惜共掛品牌。隱私承諾在第一步驟呈現。" },
+            { num: "2", title: "團隊身心儀表板（HR視角）", desc: "匿名去識別化的團隊情緒象限分布熱圖。\n部門別職業倦怠風險指數。\n無法識別任何個人資料。", ui: "Web版儀表板。當>30%成員連續5天呈現高喚起負向情緒時，自動發送警示給主管。" },
+            { num: "3", title: "企業介入觸發", desc: "自動解鎖集體呼吸練習連結。\n選擇性（非強制）的合作治療師預約入口。\n整合醫療事務教育LMS模組（與Mint Medical的協同效應）。", ui: "去污名框架：「你的團隊最近很努力。這裡有一個5分鐘的集體重置練習。」" },
+          ],
+        },
+      ];
+
+      const flow = flows[active];
+
+      return (
+        <div>
+          <SecTitle main="使用者體驗流程" sub="UX Flow" desc="三條主要使用者旅程，每一條都以身體優先、規避污名的互動模型為核心設計原則。" />
+
+          <div style={{ display: "flex", gap: 12, marginBottom: 36 }}>
+            {flows.map((f, i) => (
+              <button key={f.title} onClick={() => setActive(i)} style={{
+                flex: 1, background: active === i ? f.color : "#fff",
+                color: active === i ? "#fff" : "#5a5248",
+                border: `2px solid ${active === i ? f.color : "#e8ddd0"}`,
+                borderRadius: 14, padding: "16px 14px", cursor: "pointer",
+                fontFamily: "'Noto Sans TC', sans-serif", textAlign: "left",
+                transition: "all 0.2s",
+              }}>
+                <div style={{ fontSize: 22, marginBottom: 5 }}>{f.icon}</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{f.title}</div>
+              </button>
+            ))}
+          </div>
+
+          <div>
+            {flow.steps.map((step) => (
+              <div key={step.num} style={{ display: "flex", gap: 20, marginBottom: 20, alignItems: "flex-start" }}>
+                <div style={{
+                  width: 42, height: 42, borderRadius: "50%",
+                  background: flow.color, color: "#fff",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 16, fontWeight: 900, flexShrink: 0, marginTop: 4,
+                  fontFamily: "'Noto Sans TC', sans-serif",
+                }}>{step.num}</div>
+                <Card style={{ flex: 1, borderLeft: `4px solid ${flow.color}` }}>
+                  <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                    <div style={{ flex: 2, minWidth: 220 }}>
+                      <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 10, color: "#1c1c2e" }}>{step.title}</div>
+                      <p style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", color: "#444", lineHeight: 1.9, margin: 0, whiteSpace: "pre-line", fontWeight: 300 }}>{step.desc}</p>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 160, background: "#faf7f2", borderRadius: 10, padding: "12px 16px" }}>
+                      <div style={{ fontSize: 10, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: flow.color, letterSpacing: 1.5, marginBottom: 8 }}>UI 設計備注</div>
+                      <p style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.7, margin: 0, fontWeight: 300 }}>{step.ui}</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ── 功能規格 ── */
+    function FeatureSection() {
+      const [tab, setTab] = useState(0);
+
+      const groups = [
+        {
+          label: "核心模組", icon: "⚙️",
+          features: [
+            { name: "身體症狀地圖", icon: "🫀", phase: "MVP", color: "#c97d50",
+              desc: "互動式人體輪廓。點選解剖區域（胸部、胃部、頭部、肌肉、喉嚨）。身體輸入透過本地映射演算法轉換為情緒候選詞。完全避免精神科框架。",
+              science: "台灣精神醫學文獻：身體化是文化授權的情緒表達方式，直接心理化標籤會觸發污名迴避。" },
+            { name: "二維情緒座標", icon: "⚫", phase: "MVP", color: "#1c2b24",
+              desc: "以Russell環形模型打造的二維霧感觸控畫布。使用者放置代表當前狀態的圓點。象限標籤（緊張、平靜、興奮、消沉）以極淡的方式呈現為輔助引導。",
+              science: "神經生物學層面的情感命名：放置圓點這個動作就會激活右腹外側前額葉皮質（RVLPFC），反向降低杏仁核反應性（Lieberman等人fMRI研究）。" },
+            { name: "生理嘆息引導", icon: "🌬️", phase: "MVP", color: "#7aae8e",
+              desc: "對高喚起負向情緒狀態自動觸發。全螢幕呼吸動畫：2個膨脹圓（雙次鼻腔吸氣），1個緩慢收縮（緩慢口腔吐氣）。60秒練習附可延長選項。",
+              science: "Huberman & Spiegel（2023）RCT，n=114，28天：循環嘆息在急性焦慮降低與正向情緒提升上優於正念冥想、箱式呼吸和過度換氣法。" },
+            { name: "高粒度情緒詞庫", icon: "🪷", phase: "MVP", color: "#c9a082",
+              desc: "呼吸後的情感命名：80個以上繁體中文情緒詞卡，依喚起度／愉悅度座標分類。無DSM臨床標籤。語音備注選項（Whisper裝置端處理）。隨時間逐步擴展詞彙。",
+              science: "高情緒粒度 → 更強的神經效率、更低的憂鬱和焦慮（Feldman Barrett）。詞彙選擇＝透過MPFC抑制路徑的隱性杏仁核調節。" },
+          ],
+        },
+        {
+          label: "文化CBT", icon: "🪷",
+          features: [
+            { name: "SRWNE自主性評估", icon: "⚖️", phase: "MVP", color: "#c97d50",
+              desc: "情緒命名後，App以對話方式溫和探詢：使用者的情緒壓抑是被迫的（外部壓力、恐懼）還是自主選擇的（基於價值觀、保護關係和諧）。使用對話式問題，而非臨床量表。",
+              science: "情緒自我調節自主性壓抑量表（SRWNE，Chu等人）：被迫SRWNE → 身體症狀、重度憂鬱、焦慮、失眠。自主SRWNE → 與焦慮和社交功能障礙呈負相關。" },
+            { name: "關係導向認知重建", icon: "🤝", phase: "MVP", color: "#7aae8e",
+              desc: "CBT練習以互依型自我建構為框架重新設計。提示語尊重孝順和關係和諧為美德而非障礙。幫助使用者區分適應性與非適應性的情緒壓抑模式。",
+              science: "西方CBT的個人主義式自我主張與台灣的集體主義和孝道價值觀衝突（Hwang 2006，跨文化CBT適配文獻）。框架重建需符合仁、義等儒家價值觀。" },
+            { name: "辯證式因應模組", icon: "☯️", phase: "第二階段", color: "#1c2b24",
+              desc: "以道家和佛教為基礎的練習，教導接受矛盾（辯證因應）和不執著。透過隱喻和故事呈現，不使用臨床語言。",
+              science: "辯證因應與不執著（儒家、佛教、道家框架）顯著降低情緒反應性和身體化風險（Frontiers 2025）。" },
+            { name: "正向情緒保存日記", icon: "✨", phase: "第二階段", color: "#c9a082",
+              desc: "10種Savoring策略對應互動日記提示：人際資本化（分享）、記憶建構、感官銳化、時間意識、數算祝福。依練習情境選擇策略。",
+              science: "多種Savoring策略的調節多元性與生活滿意度和主觀幸福感顯著相關（Bryant & Veroff 2007）。Savoring介入改變大腦的獎勵正向電位（RewP）事件相關電位偏轉。" },
+          ],
+        },
+        {
+          label: "生物回饋與ML", icon: "📡",
+          features: [
+            { name: "HRV生物回饋迴路", icon: "💓", phase: "第二階段", color: "#c97d50",
+              desc: "整合Apple Watch / Garmin SDK讀取即時HRV。App引導使用者達到個人共振呼吸頻率（通常約0.1 Hz / 每分鐘6次呼吸），最大化HRV並同步呼吸竇性心律不整。",
+              science: "HRV生物回饋統合分析（24項RCT）：急性壓力降低具大效果量，慢性焦慮/憂鬱具中至大效果量。RRR協定（執法人員研究）驗證了快速自律神經穩定效果。" },
+            { name: "自適應ML治療路徑", icon: "🤖", phase: "第二階段", color: "#7aae8e",
+              desc: "DFDLOF演算法（動態回饋驅動學習優化框架）追蹤哪種介入（呼吸引導 vs 認知重建 vs 正向保存）對每位使用者的情緒座標改善最有效。個人化路徑隨每次練習演進。",
+              science: "AI增強學習（A4L）框架應用於數位治療工具。裝置端Core ML / TFLite在保護隱私的同時實現個人化。" },
+            { name: "身體症狀模式識別", icon: "🔍", phase: "第三階段", color: "#1c2b24",
+              desc: "縱向分析身體症狀與情緒座標的相關性。識別使用者特定的身體化模式（如「胃部緊繃總在高喚起負向狀態之前出現」）。主動提醒與預防性介入建議。",
+              science: "逆向身體錨定（Reverse Somatic Anchoring）框架——現代台灣青年使用身體化作為心理調節機制。模式識別實現急性失代償前的早期介入。" },
+            { name: "裝置端語音分析", icon: "🎙️", phase: "MVP", color: "#c9a082",
+              desc: "裝置端Whisper（OpenAI）處理語音備注，零雲端傳輸。本地語意解析器從語音中分類身體化慣用語和情緒詞候選詞。任何可識別的音訊資料都不離開裝置。",
+              science: "隱私關鍵設計：台灣的「面子」/「臉」污名文化意味著任何被察覺的資料洩漏都會阻止App採用。裝置端處理同時是技術決策也是治療設計決策。" },
+          ],
+        },
+      ];
+
+      const g = groups[tab];
+
+      return (
+        <div>
+          <SecTitle main="功能規格" sub="Feature Specifications" desc="每一個功能都直接對應一項神經科學發現或一個台灣文化心理學需求。沒有任何功能是為了功能而存在的。" />
+
+          <div style={{ display: "flex", gap: 10, marginBottom: 32 }}>
+            {groups.map((grp, i) => (
+              <button key={grp.label} onClick={() => setTab(i)} style={{
+                padding: "10px 22px", borderRadius: 10, cursor: "pointer",
+                background: tab === i ? "#1c2b24" : "#fff",
+                color: tab === i ? "#fff" : "#5a5248",
+                border: `2px solid ${tab === i ? "#1c2b24" : "#e8ddd0"}`,
+                fontFamily: "'Noto Sans TC', sans-serif", fontSize: 13, fontWeight: 600,
+                transition: "all 0.2s",
+              }}>{grp.icon} {grp.label}</button>
+            ))}
+          </div>
+
+          <div style={{ display: "grid", gap: 20 }}>
+            {g.features.map(f => (
+              <Card key={f.name} style={{ borderLeft: `5px solid ${f.color}` }}>
+                <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                  <div style={{ flex: 2, minWidth: 260 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                      <span style={{ fontSize: 24 }}>{f.icon}</span>
+                      <div>
+                        <Label text={f.phase} color={f.color} />
+                        <div style={{ fontSize: 16, fontWeight: 700, marginTop: 4 }}>{f.name}</div>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", color: "#444", lineHeight: 1.9, margin: 0, fontWeight: 300 }}>{f.desc}</p>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 200, background: "#faf7f2", borderRadius: 10, padding: "14px 16px" }}>
+                    <div style={{ fontSize: 10, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 1.5, marginBottom: 8 }}>📚 科學依據</div>
+                    <p style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.7, margin: 0, fontWeight: 300 }}>{f.science}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ── 科學根據 ── */
+    function ScienceSection() {
+      return (
+        <div>
+          <SecTitle main="科學根據" sub="Scientific Foundations" desc="惜惜的每一個設計決策都建立在同儕審查的神經科學與跨文化臨床心理學研究之上。" />
+          <div style={{ display: "grid", gap: 22 }}>
+            {[
+              {
+                domain: "情感環形模型", author: "Russell, 1980 + 現代生物計量學改良", color: "#1c2b24", icon: "⚫",
+                findings: [
+                  "所有情緒體驗來自兩個正交系統：愉悅度（享樂色調）與喚起度（生理強度）",
+                  "複雜生物計量模型（三角係數 Vsin1、Acos1、Vcos1）展示認知過程如何疊加在基本情緒底層",
+                  "高強度生理狀態會扭曲個體對愉悅度的感知——情緒座標必須能容納這種非線性關係",
+                ],
+                app: "惜惜的情緒座標以環形模型為基礎。霧感漸層的視覺設計刻意反映了情緒狀態是連續的而非類別性的數學現實——象限標籤以極淡的方式呈現為引導，而非剛性的分類框。",
+              },
+              {
+                domain: "情緒粒度與情感命名", author: "Feldman Barrett（建構情緒理論）+ Lieberman等人（fMRI研究）", color: "#c97d50", icon: "🏷️",
+                findings: [
+                  "情感命名（精確命名情緒）顯著降低杏仁核反應性，透過MPFC抑制路徑激活右腹外側前額葉皮質（RVLPFC）",
+                  "高情緒粒度預測更低的憂鬱和焦慮（21天日記研究）與更強的神經效率",
+                  "蜘蛛恐懼症實驗室研究：情感命名組在一週後表現出更低的皮膚導電反應，且能實際靠近蜘蛛更近",
+                  "支持向量機ML模型顯示：情感命名期間的RVLPFC/杏仁核激活可準確預測3個月後的現實生活改善",
+                ],
+                app: "高粒度情緒詞庫（80個以上繁體中文詞彙，無臨床標籤）是核心治療機制，不只是UX選擇。每次詞彙選擇都是一個隱性調節行為，激活大腦的理性調控架構。",
+              },
+              {
+                domain: "生理嘆息（循環嘆息）", author: "Huberman & Spiegel，史丹佛——Cell Reports Medicine（2023），n=114，28天RCT", color: "#7aae8e", icon: "🌬️",
+                findings: [
+                  "循環嘆息（雙次鼻腔吸氣＋緩慢口腔吐氣，1:2比例）在所有呼吸條件中產生最顯著、最持久的靜息呼吸頻率降低",
+                  "在日常正向情緒提升和狀態焦慮降低方面優於正念冥想",
+                  "機制：肺泡最大擴張＋延長吐氣 → 迷走神經刺激 → 立即副交感神經主導",
+                  "HRV生物回饋結合嘆息（RRR協定）在執法人員研究中驗證了快速情緒穩定效果",
+                ],
+                app: "生理嘆息動畫對高喚起負向情緒狀態自動觸發，先於所有認知介入。不附任何說明——只有呼吸。這符合科學依據：嘆息無需有意識的意圖就能發揮效果。",
+              },
+              {
+                domain: "台灣文化情緒心理學", author: "SRWNE量表（Chu等人）+ 跨文化情緒壓抑文獻 + 身體化研究", color: "#c9a082", icon: "🪷",
+                findings: [
+                  "被迫SRWNE（出於恐懼/權威的強制沉默）→ 身體症狀、憂鬱、焦慮、失眠、社交功能障礙",
+                  "自主SRWNE（基於價值觀的關係和諧維護）→ 與焦慮和功能障礙呈負相關，具有保護性",
+                  "ERP和皮膚導電反應實驗室研究：使用情緒壓抑的中國受試者憂鬱感受顯著降低，生理壓力也更低——直接與西方CBT假設相悖",
+                  "台灣的身體化是被文化授權的情緒表達方式，不是情緒智力的缺失，而是文化特定情緒溝通的精密矩陣",
+                  "台灣族群的述情障礙（alexithymia）閾值需調整，以考量規範性身體化傾向（台灣精神醫學文獻，2025）",
+                ],
+                app: "惜惜從不病理化情緒壓抑。SRWNE模組專門幫助使用者從被迫壓抑轉向自主選擇——從有毒的沉默轉向符合價值觀的適應性邊界。這是App的核心文化創新。",
+              },
+              {
+                domain: "Savoring與正向情緒保存", author: "Bryant & Veroff（2007）+ Fredrickson拓展建構理論 + RewP事件相關電位研究", color: "#7aae8e", icon: "✨",
+                findings: [
+                  "Savoring是在三個時間維度主動參與、欣賞和增強正向體驗的能力：過去（回憶）、當下（沉浸）和未來（期待）",
+                  "調節多元性——使用多種不同的Savoring策略——與長期生活滿意度和幸福感顯著相關",
+                  "Savoring介入改變大腦的獎勵正向電位（RewP）事件相關電位偏轉，物理性地改變大腦登記獎勵刺激的方式",
+                  "人際資本化（分享正向消息）：放大分享者的原始正向情緒，同時增強人際親密感和每日關係滿意度",
+                  "缺乏Savoring能力與快感缺失和憂鬱高度預測相關",
+                ],
+                app: "Savoring日記在情緒座標顯示改善時出現於練習結束，提供符合情境的策略建議。當練習中提到另一個人時，會特別提示人際資本化。以台灣集體主義設計人際Savoring。",
+              },
+            ].map(s => (
+              <Card key={s.domain} style={{ borderTop: `4px solid ${s.color}` }}>
+                <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                  <div style={{ flex: 2, minWidth: 280 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <span style={{ fontSize: 22 }}>{s.icon}</span>
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#1c1c2e" }}>{s.domain}</div>
+                        <div style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: "#8a7a6a", fontWeight: 300 }}>{s.author}</div>
+                      </div>
+                    </div>
+                    <ul style={{ margin: "12px 0 0", paddingLeft: 18 }}>
+                      {s.findings.map((f, i) => (
+                        <li key={i} style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#444", marginBottom: 8, lineHeight: 1.8, fontWeight: 300 }}>{f}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 200, background: s.color + "10", border: `1px solid ${s.color}25`, borderRadius: 10, padding: "16px" }}>
+                    <div style={{ fontSize: 10, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: s.color, letterSpacing: 1.5, marginBottom: 8 }}>惜惜的應用</div>
+                    <p style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#444", lineHeight: 1.8, margin: 0, fontWeight: 300 }}>{s.app}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ── 市場分析 ── */
+    function MarketSection() {
+      return (
+        <div>
+          <SecTitle
+            main="市場分析"
+            sub="Market Analysis"
+            desc="台灣正處於亞太市場爆炸性成長、政策順風和深度未被服務族群（因污名無法使用傳統精神科服務）的三重交匯點。"
+          />
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 28 }}>
+            {[
+              { num: "82億美元", label: "全球市場規模（2024）", color: "#1c2b24" },
+              { num: "227億美元", label: "預估規模（2030）", color: "#7aae8e" },
+              { num: "18%", label: "全球年複成長率 2025–2030", color: "#c97d50" },
+              { num: "38.2%", label: "亞太區佔全球市場份額", color: "#c9a082" },
+              { num: "51億美元", label: "亞太區市場規模（2030）", color: "#1c2b24" },
+              { num: "16.5%", label: "亞太區年複成長率", color: "#7aae8e" },
+            ].map(m => (
+              <Card key={m.label} style={{ textAlign: "center", borderBottom: `4px solid ${m.color}`, padding: "20px 16px" }}>
+                <div style={{ fontSize: 24, fontWeight: 900, color: m.color, marginBottom: 6 }}>{m.num}</div>
+                <div style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.6, fontWeight: 300 }}>{m.label}</div>
+              </Card>
+            ))}
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 28 }}>
+            <Card>
+              <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 2, marginBottom: 18 }}>🚀 市場機會</div>
+              {[
+                { icon: "📜", title: "政策順風", desc: "台灣《精神衛生法》修正案＋積極的遠距醫療補貼。社區心理健康中心長期資源不足，私人數位工具填補公部門缺口的機會清晰存在。" },
+                { icon: "🏢", title: "B2B企業採用", desc: "沙發心理的成功已驗證商業模式：國泰金控將正念模組整合進FitBack企業健康App。醫療事務和製藥公司是惜惜企業版的天然目標客群。" },
+                { icon: "👩‍💻", title: "數位原生世代", desc: "台灣年輕世代的態度轉變加速中，去污名化趨勢明顯。高智慧型手機滲透率為數位心理健康工具提供了優越的觸及條件。" },
+                { icon: "🔒", title: "隱私即競爭護城河", desc: "裝置端處理 vs 所有競爭對手的雲端架構。對於受污名約束的台灣使用者，「不上傳」是唯一能建立信任的架構。" },
+              ].map(o => (
+                <div key={o.title} style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+                  <span style={{ fontSize: 20 }}>{o.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#1c2b24", marginBottom: 4 }}>{o.title}</div>
+                    <div style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.7, fontWeight: 300 }}>{o.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+
+            <Card>
+              <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#c97d50", letterSpacing: 2, marginBottom: 18 }}>⚠️ 風險與因應策略</div>
+              {[
+                { icon: "🏷️", threat: "污名驅動的下載迴避", mit: "行銷和UI完全避免臨床標籤。定位為「身心平衡工具」，不說「心理健康App」。" },
+                { icon: "📋", threat: "數位治療法規重新分類", mit: "初期留在健康保健類別。透過學術合作（台灣大學合作）建立臨床證據。第三階段啟動DTx認證申請流程。" },
+                { icon: "💰", threat: "消費者獲客成本 vs Calm/Headspace", mit: "B2B優先策略降低消費者端獲客成本。直接鎖定醫療事務團隊、HR部門和企業健康合約。" },
+                { icon: "🔄", threat: "長期參與度下降", mit: "非懲罰性連續練習設計、Savoring日記留存鉤、持續演進的ML個人化路徑。Mind Booster Green以遊戲化實現89%留存率已驗證策略有效。" },
+              ].map(t => (
+                <div key={t.threat} style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+                  <span style={{ fontSize: 20 }}>{t.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#c97d50", marginBottom: 3 }}>風險：{t.threat}</div>
+                    <div style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#5a5248", lineHeight: 1.7, fontWeight: 300 }}>→ {t.mit}</div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </div>
+
+          <Card>
+            <div style={{ fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700, color: "#7aae8e", letterSpacing: 2, marginBottom: 24 }}>上市藍圖</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
+              {[
+                {
+                  phase: "A 階段", label: "MVP上市", time: "第1–6個月", color: "#c97d50",
+                  items: [
+                    "身體症狀地圖＋情緒座標＋生理嘆息",
+                    "繁體中文高粒度情緒詞庫",
+                    "裝置端Whisper語音",
+                    "B2B試點：1–2家台灣企業夥伴",
+                    "申請經濟部社會創新平台（參照沙發心理模式）",
+                  ],
+                },
+                {
+                  phase: "B 階段", label: "臨床實證", time: "第7–18個月", color: "#7aae8e",
+                  items: [
+                    "學術RCT合作（台灣大學大學生族群）",
+                    "HRV生物回饋整合（Apple Watch）",
+                    "SRWNE模組＋Savoring日記上線",
+                    "B2B擴展：製藥/醫療事務（Mint Medical協同效應）",
+                    "台灣、香港、新加坡App Store上架",
+                  ],
+                },
+                {
+                  phase: "C 階段", label: "DTx申請", time: "第19–36個月",  color: "#1c2b24",
+                  items: [
+                    "發表台灣RCT數據",
+                    "申請數位治療工具（DTx）認證",
+                    "身體症狀ML模式識別（第三階段）",
+                    "區域擴展：日本、韓國",
+                    "探索全民健保（NHI）給付可能性",
+                  ],
+                },
+              ].map((p, i) => (
+                <div key={p.phase} style={{
+                  paddingRight: i < 2 ? 24 : 0,
+                  marginRight: i < 2 ? 24 : 0,
+                  borderRight: i < 2 ? "1px dashed #e0d4c4" : "none",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                    <div style={{
+                      width: 38, height: 38, borderRadius: "50%",
+                      background: p.color, color: "#fff",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 13, fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 700,
+                    }}>{p.phase[0]}</div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: p.color, fontFamily: "'Noto Sans TC', sans-serif" }}>{p.label}</div>
+                      <div style={{ fontSize: 11, fontFamily: "'Noto Sans TC', sans-serif", color: "#8a7a6a", fontWeight: 300 }}>{p.time}</div>
+                    </div>
+                  </div>
+                  {p.items.map((item, j) => (
+                    <div key={j} style={{ fontSize: 12, fontFamily: "'Noto Sans TC', sans-serif", color: "#444", marginBottom: 9, display: "flex", gap: 6, lineHeight: 1.6, fontWeight: 300 }}>
+                      <span style={{ color: p.color, flexShrink: 0, marginTop: 2 }}>→</span> {item}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
