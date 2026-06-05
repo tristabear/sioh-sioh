@@ -67,7 +67,9 @@ export default function RescueScreen() {
       <div className="screen fade-up" style={{ display: 'flex', flexDirection: 'column', minHeight: '80dvh' }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px 28px', textAlign: 'center' }}>
           <div style={{ fontSize: 64, marginBottom: 20 }}>🌿</div>
-          <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--forest)', marginBottom: 12 }}>做得很好</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--forest)', marginBottom: 12 }}>
+            {session.affectCoord?.valence < 0 ? '你照顧了自己' : '做得很好'}
+          </h1>
           <p style={{ fontSize: 15, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 32 }}>
             你的迷走神經剛剛被啟動了。<br />身體正在慢慢回到平靜。
           </p>
