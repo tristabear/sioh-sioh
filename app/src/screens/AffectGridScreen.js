@@ -46,15 +46,17 @@ export default function AffectGridScreen() {
   const getQuadrantLabel = () => {
     if (!coord) return null;
     const { valence, arousal } = coord;
-    if (valence < -0.2 && arousal > 0.2) return { text: '緊張 / 焦慮', color: '#c97d50' };
+    // x-axis (coord.valence) = arousal (left=calm, right=activated)
+    // y-axis (coord.arousal) = valence (top=pleasant, bottom=unpleasant)
+    if (valence < -0.2 && arousal > 0.2) return { text: '平靜 / 滿足', color: '#1c2b24' };
     if (valence > 0.2 && arousal > 0.2) return { text: '興奮 / 活躍', color: '#7aae8e' };
     if (valence < -0.2 && arousal < -0.2) return { text: '消沉 / 疲憊', color: '#8a7a6a' };
-    if (valence > 0.2 && arousal < -0.2) return { text: '平靜 / 滿足', color: '#1c2b24' };
+    if (valence > 0.2 && arousal < -0.2) return { text: '緊張 / 焦慮', color: '#c97d50' };
     return { text: '中性', color: '#8a7a6a' };
   };
 
   const label = getQuadrantLabel();
-  const needsRescue = coord && coord.arousal > 0.3 && coord.valence < -0.2;
+  const needsRescue = coord && coord.arousal < -0.3 && coord.valence > 0.2;
 
   return (
     <div className="screen" style={{ padding: '0 0 100px 0' }}>
