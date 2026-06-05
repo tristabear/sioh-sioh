@@ -8,7 +8,10 @@ export function AppProvider({ children }) {
     symptoms: [],
     affectCoord: null, // { valence: -1..1, arousal: -1..1 }
     emotionWord: null,
-    srwneResult: null, // 'controlled' | 'autonomous' | 'neutral'
+    sharingChoice: null, // 'yes' | 'no' | 'unsure'
+    whyNotShare: null,   // reason id if sharingChoice === 'no'
+    actionChoice: null,  // 'share' | 'photo' | 'text' | 'stay' | 'rescue'
+    srwneResult: null,
     savoringDone: false,
   });
 
@@ -22,20 +25,21 @@ export function AppProvider({ children }) {
     setSession(prev => ({ ...prev, ...patch }));
   }, []);
 
-  const saveSession = useCallback(() => {
+  const saveSession = useCallback((patch = {}) => {
     const entry = {
       ...session,
+      ...patch,
       timestamp: new Date().toISOString(),
       id: Date.now(),
     };
     const next = [entry, ...history].slice(0, 30); // keep last 30
     setHistory(next);
     try { localStorage.setItem('xixi-history', JSON.stringify(next)); } catch {}
-    setSession({ symptoms: [], affectCoord: null, emotionWord: null, srwneResult: null, savoringDone: false });
+    setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, srwneResult: null, savoringDone: false });
   }, [session, history]);
 
   const resetSession = useCallback(() => {
-    setSession({ symptoms: [], affectCoord: null, emotionWord: null, srwneResult: null, savoringDone: false });
+    setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, srwneResult: null, savoringDone: false });
   }, []);
 
   // Determine if user needs physiological rescue
