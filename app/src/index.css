@@ -131,6 +131,7 @@ button {
   transition: background 0.2s;
 }
 .btn-secondary:active { background: rgba(201,160,130,0.08); }
+.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .textarea {
   width: 100%;

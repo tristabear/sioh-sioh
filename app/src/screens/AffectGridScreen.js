@@ -2,14 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-
-// Russell's circumplex: valence on x-axis (左負/右正), arousal on y-axis (上激動/下平靜)
-const QUADRANTS = [
-  { id: 'HA_NEG', label: '激動負面', valence: -0.7, arousal: 0.7, color: '#C86F59' },
-  { id: 'HA_POS', label: '激動正面', valence: 0.7, arousal: 0.7, color: '#5a8fa3' },
-  { id: 'LA_NEG', label: '平靜負面', valence: -0.7, arousal: -0.7, color: '#7a8e95' },
-  { id: 'LA_POS', label: '平靜正面', valence: 0.7, arousal: -0.7, color: '#3A6B7E' },
-];
+import { QUADRANTS } from '../data/emotions';
 
 export default function AffectGridScreen() {
   const navigate = useNavigate();

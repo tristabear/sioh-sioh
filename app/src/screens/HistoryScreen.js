@@ -1,6 +1,9 @@
 /* eslint-disable */
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { SOMATIC_SYMPTOMS } from '../data/emotions';
+import { SOMATIC_SYMPTOMS, QUADRANTS } from '../data/emotions';
+import { getQuadrantInfo } from '../utils/media';
 
 const SYMPTOM_LABELS = Object.fromEntries(SOMATIC_SYMPTOMS.map(s => [s.id, s.label]));
 
@@ -17,6 +20,7 @@ export default function HistoryScreen() {
             還沒有記錄。<br />完成第一次練習之後，<br />你的情緒軌跡會出現在這裡。
           </p>
         </div>
+        <BackupSection />
       </div>
     );
   }
@@ -34,6 +38,7 @@ export default function HistoryScreen() {
           <div className="card">
             <div style={{ fontSize: 12, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 14 }}>情緒軌跡</div>
             <MoodChart history={history.slice(0, 14).reverse()} />
+            <QuadrantLegend />
           </div>
         </div>
       )}
@@ -44,19 +49,25 @@ export default function HistoryScreen() {
           <EntryCard key={entry.id} entry={entry} index={i} />
         ))}
       </div>
+
+      <div style={{ padding: '12px 24px 0' }}>
+        <BackupSection />
+      </div>
     </div>
   );
 }
 
 function EntryCard({ entry, index }) {
+  const navigate = useNavigate();
   const date = new Date(entry.timestamp);
-  const coord = entry.affectCoord;
-  const hue = coord ? Math.round((coord.valence + 1) * 60 + 160) : 200;
-  const light = coord ? Math.round(45 + coord.arousal * 15) : 55;
-  const dotColor = `hsl(${hue}, 55%, ${light}%)`;
+  const dotColor = getQuadrantInfo(entry.affectCoord).color;
 
   return (
-    <div className={`card fade-up`} style={{ animationDelay: `${index * 0.04}s`, opacity: 0, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+    <div
+      className={`card fade-up`}
+      style={{ animationDelay: `${index * 0.04}s`, opacity: 0, display: 'flex', gap: 16, alignItems: 'flex-start', cursor: 'pointer' }}
+      onClick={() => navigate(`/history/${entry.id}`)}
+    >
       <div style={{ width: 44, height: 44, borderRadius: '50%', background: dotColor, flexShrink: 0, marginTop: 2 }} />
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
@@ -107,8 +118,74 @@ function MoodChart({ history }) {
       )}
       {pts.map((pt, i) => {
         const [x, y] = pt.split(',').map(Number);
-        return <circle key={i} cx={x} cy={y} r={4} fill="var(--sage)" />;
+        const color = getQuadrantInfo(history[i].affectCoord).color;
+        return <circle key={i} cx={x} cy={y} r={4} fill={color} />;
       })}
     </svg>
+  );
+}
+
+function BackupSection() {
+  const { history, importHistory } = useApp();
+  const fileInputRef = useRef(null);
+  const [message, setMessage] = useState(null);
+
+  const handleExport = () => {
+    const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sioh-sioh-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportFile = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const data = JSON.parse(await file.text());
+      if (!Array.isArray(data)) throw new Error('invalid');
+      importHistory(data);
+      setMessage(`已匯入 ${data.length} 筆紀錄`);
+    } catch {
+      setMessage('匯入失敗，請確認檔案格式');
+    }
+  };
+
+  return (
+    <div className="card">
+      <div style={{ fontSize: 12, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>
+        備份與還原
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <button className="btn-secondary" onClick={handleExport} disabled={history.length === 0}>
+          📤 匯出紀錄
+        </button>
+        <button className="btn-secondary" onClick={() => fileInputRef.current?.click()}>
+          📥 匯入紀錄
+        </button>
+        <input ref={fileInputRef} type="file" accept="application/json" style={{ display: 'none' }} onChange={handleImportFile} />
+      </div>
+      {message && (
+        <p style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, marginTop: 10 }}>
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function QuadrantLegend() {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px', marginTop: 14 }}>
+      {QUADRANTS.map(q => (
+        <div key={q.id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: q.color, flexShrink: 0 }} />
+          <span style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>{q.label}</span>
+        </div>
+      ))}
+    </div>
   );
 }

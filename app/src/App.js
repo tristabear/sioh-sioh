@@ -12,6 +12,7 @@ import EmotionScreen from './screens/EmotionScreen';
 import SRWNEScreen from './screens/SRWNEScreen';
 import SavoringScreen from './screens/SavoringScreen';
 import HistoryScreen from './screens/HistoryScreen';
+import HistoryDetailScreen from './screens/HistoryDetailScreen';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="/check/savoring" element={<><SavoringScreen /><BottomNav /></>} />
             <Route path="/rescue" element={<RescueScreen />} />
             <Route path="/history" element={<><HistoryScreen /><BottomNav /></>} />
+            <Route path="/history/:id" element={<><HistoryDetailScreen /><BottomNav /></>} />
           </Routes>
         </div>
       </BrowserRouter>

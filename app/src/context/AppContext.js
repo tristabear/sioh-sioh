@@ -19,7 +19,8 @@ export function AppProvider({ children }) {
 
   const [history, setHistory] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('xixi-history') || '[]');
+      const stored = localStorage.getItem('sioh-sioh-history') ?? localStorage.getItem('xixi-history');
+      return JSON.parse(stored || '[]');
     } catch { return []; }
   });
 
@@ -36,12 +37,30 @@ export function AppProvider({ children }) {
     };
     const next = [entry, ...history].slice(0, 30); // keep last 30
     setHistory(next);
-    try { localStorage.setItem('xixi-history', JSON.stringify(next)); } catch {}
+    try { localStorage.setItem('sioh-sioh-history', JSON.stringify(next)); } catch {}
     setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
   }, [session, history]);
 
   const resetSession = useCallback(() => {
     setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
+  }, []);
+
+  // Merge an imported backup (array of entries) into existing history, deduping by id.
+  const importHistory = useCallback((data) => {
+    if (!Array.isArray(data)) return false;
+    setHistory(prev => {
+      const seen = new Set();
+      const merged = [...data, ...prev].filter(e => {
+        if (!e || e.id == null || seen.has(e.id)) return false;
+        seen.add(e.id);
+        return true;
+      });
+      merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      const next = merged.slice(0, 30);
+      try { localStorage.setItem('sioh-sioh-history', JSON.stringify(next)); } catch {}
+      return next;
+    });
+    return true;
   }, []);
 
   // Determine if user needs physiological rescue
@@ -50,7 +69,7 @@ export function AppProvider({ children }) {
     : false;
 
   return (
-    <AppContext.Provider value={{ session, updateSession, saveSession, resetSession, history, needsRescue }}>
+    <AppContext.Provider value={{ session, updateSession, saveSession, resetSession, history, importHistory, needsRescue }}>
       {children}
     </AppContext.Provider>
   );

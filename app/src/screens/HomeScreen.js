@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { getQuadrantInfo } from '../utils/media';
 
 export default function HomeScreen() {
   const navigate = useNavigate();
@@ -114,12 +115,10 @@ export default function HomeScreen() {
 
 function MoodDot({ coord, size = 32 }) {
   if (!coord) return <div style={{ width: size, height: size, borderRadius: '50%', background: '#eee' }} />;
-  const hue = Math.round((coord.valence + 1) * 60 + 160); // green → red
-  const light = Math.round(45 + coord.arousal * 15);
   return (
     <div style={{
       width: size, height: size, borderRadius: '50%',
-      background: `hsl(${hue}, 55%, ${light}%)`,
+      background: getQuadrantInfo(coord).color,
       flexShrink: 0,
     }} />
   );

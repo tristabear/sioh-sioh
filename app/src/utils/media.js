@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { QUADRANTS } from '../data/emotions';
 
 // Resize/compress an image File down to a data URL, keeping localStorage usage small.
 export function compressImage(file, maxDim = 720, quality = 0.7) {
@@ -34,10 +35,8 @@ export function getQuadrantInfo(coord) {
   if (!coord) return { label: '今天的感受', color: '#3A6B7E' };
   const pos = coord.valence >= 0;
   const high = coord.arousal >= 0;
-  if (high && !pos) return { label: '激動負面', color: '#C86F59' };
-  if (high && pos) return { label: '激動正面', color: '#5a8fa3' };
-  if (!high && !pos) return { label: '平靜負面', color: '#7a8e95' };
-  return { label: '平靜正面', color: '#3A6B7E' };
+  const q = QUADRANTS.find(q => (q.valence >= 0) === pos && (q.arousal >= 0) === high);
+  return { label: q.label, color: q.color };
 }
 
 // Draw text wrapped to maxWidth, character by character (works for CJK).
@@ -95,7 +94,7 @@ export function generateShareCard(session) {
 
   ctx.fillStyle = '#faf7f2';
   ctx.font = '700 32px "Noto Sans TC", sans-serif';
-  ctx.fillText('惜惜 xixi', 60, 90);
+  ctx.fillText('惜惜 sioh-sioh', 60, 90);
 
   const dateStr = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
   ctx.font = '300 24px "Noto Sans TC", sans-serif';
@@ -124,7 +123,7 @@ export function generateShareCard(session) {
 }
 
 // Share an image via the Web Share API when available, falling back to a download.
-export async function shareOrDownloadImage(dataUrl, filename = 'xixi-share.png') {
+export async function shareOrDownloadImage(dataUrl, filename = 'sioh-sioh-share.png') {
   try {
     const blob = await (await fetch(dataUrl)).blob();
     const file = new File([blob], filename, { type: blob.type });
