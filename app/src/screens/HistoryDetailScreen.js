@@ -13,6 +13,7 @@ const ACTION_LABELS = {
   text: '✏️ 文字紀錄',
   stay: '🌿 靜靜陪伴自己',
   rescue: '🌬️ 呼吸練習',
+  enough: '🌱 先這樣就足夠',
 };
 
 const SRWNE_LABELS = {

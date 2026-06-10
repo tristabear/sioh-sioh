@@ -37,6 +37,7 @@ const DONE_MESSAGES = {
   photo:   { emoji: '📷', title: '照片留住了這一刻',  body: '影像是很有力量的記憶方式。\n今天你照顧了自己。' },
   text:    { emoji: '✏️', title: '文字讓感受更清晰',  body: '把它寫下來，你就給了它一個容身之處。' },
   stay:    { emoji: '🌿', title: '你陪伴了自己',      body: '靜靜地待著，也是一種很深的照顧。' },
+  enough:  { emoji: '🌱', title: '這樣就足夠了',      body: '不用做更多，你已經停下來陪了自己一下。' },
   default: { emoji: '🌱', title: '練習完成了',        body: '你今天惜惜了自己的心。這一分鐘是值得的。' },
 };
 
@@ -146,6 +147,9 @@ export default function SRWNEScreen() {
           🌬️ 呼吸練習
         </button>
       )}
+      <button className="btn-secondary" onClick={() => handleDone('enough')}>
+        先這樣就足夠
+      </button>
     </div>
   );
 
