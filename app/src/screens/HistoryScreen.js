@@ -101,20 +101,18 @@ function MoodChart({ history }) {
   const valenceToY = v => H - ((v + 1) / 2) * H;
 
   // Each point reflects the average of the emotion words picked that session
-  // (falling back to the affect grid coordinate if no words were picked),
-  // plus the valence range across those words to show how mixed the moment was.
+  // (falling back to the affect grid coordinate if no words were picked).
+  // Dot size grows slightly with how many words were picked.
   const points = history.map(e => {
     const words = e.emotionWords || [];
     if (words.length > 0) {
-      const valences = words.map(w => w.valence);
-      const arousals = words.map(w => w.arousal);
       const avg = arr => arr.reduce((s, v) => s + v, 0) / arr.length;
       return {
-        coord: { valence: avg(valences), arousal: avg(arousals) },
-        spread: words.length > 1 ? [Math.min(...valences), Math.max(...valences)] : null,
+        coord: { valence: avg(words.map(w => w.valence)), arousal: avg(words.map(w => w.arousal)) },
+        radius: Math.min(4 + (words.length - 1), 6),
       };
     }
-    return { coord: e.affectCoord || { valence: 0, arousal: 0 }, spread: null };
+    return { coord: e.affectCoord || { valence: 0, arousal: 0 }, radius: 4 };
   });
 
   const pts = points.map((p, i) => ({
@@ -135,23 +133,9 @@ function MoodChart({ history }) {
         />
       )}
       {pts.map((pt, i) => {
-        const { coord, spread } = points[i];
+        const { coord, radius } = points[i];
         const color = getQuadrantInfo(coord).color;
-        return (
-          <g key={i}>
-            {spread && (
-              <line
-                x1={pt.x} x2={pt.x}
-                y1={valenceToY(spread[1])} y2={valenceToY(spread[0])}
-                stroke={color}
-                strokeWidth="3"
-                strokeOpacity="0.25"
-                strokeLinecap="round"
-              />
-            )}
-            <circle cx={pt.x} cy={pt.y} r={4} fill={color} />
-          </g>
-        );
+        return <circle key={i} cx={pt.x} cy={pt.y} r={radius} fill={color} />;
       })}
     </svg>
   );
