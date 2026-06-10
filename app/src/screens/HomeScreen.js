@@ -36,7 +36,7 @@ export default function HomeScreen() {
           <div style={{
             width: 56, height: 56,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, #D9A05B 0%, #C86F59 100%)',
+            background: 'radial-gradient(circle, #C8A579 0%, #BE8374 100%)',
             marginBottom: 20,
             animation: 'pulse 4s ease-in-out infinite',
           }} />

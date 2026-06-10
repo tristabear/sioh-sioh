@@ -87,7 +87,7 @@ export const SRWNE_PROMPTS = [
 
 // 情緒象限 — Russell's circumplex: valence 為 x 軸（左負/右正），arousal 為 y 軸（上激動/下平靜）
 export const QUADRANTS = [
-  { id: 'HA_NEG', label: '強烈負面', valence: -0.7, arousal: 0.7, color: '#C86F59' },
+  { id: 'HA_NEG', label: '強烈負面', valence: -0.7, arousal: 0.7, color: '#BE8374' },
   { id: 'HA_POS', label: '強烈正面', valence: 0.7, arousal: 0.7, color: '#5a8fa3' },
   { id: 'LA_NEG', label: '平靜負面', valence: -0.7, arousal: -0.7, color: '#7a8e95' },
   { id: 'LA_POS', label: '平靜正面', valence: 0.7, arousal: -0.7, color: '#3A6B7E' },

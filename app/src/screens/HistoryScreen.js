@@ -86,7 +86,7 @@ function EntryCard({ entry, index }) {
             </span>
           ))}
           {entry.srwneResult && (
-            <span style={{ fontSize: 12, fontFamily: 'var(--font-sans)', color: entry.srwneResult === 'autonomous' ? 'var(--sage)' : 'var(--clay)', background: entry.srwneResult === 'autonomous' ? 'rgba(58,107,126,0.12)' : 'rgba(200,111,89,0.12)', padding: '3px 8px', borderRadius: 20 }}>
+            <span style={{ fontSize: 12, fontFamily: 'var(--font-sans)', color: entry.srwneResult === 'autonomous' ? 'var(--sage)' : 'var(--clay)', background: entry.srwneResult === 'autonomous' ? 'rgba(58,107,126,0.12)' : 'rgba(190,131,116,0.12)', padding: '3px 8px', borderRadius: 20 }}>
               {entry.srwneResult === 'autonomous' ? '自主選擇' : entry.srwneResult === 'controlled' ? '被迫沉默' : ''}
             </span>
           )}
@@ -98,17 +98,35 @@ function EntryCard({ entry, index }) {
 
 function MoodChart({ history }) {
   const W = 280, H = 80;
-  const pts = history.map((e, i) => {
-    const x = (i / Math.max(history.length - 1, 1)) * W;
-    const y = e.affectCoord ? H - ((e.affectCoord.valence + 1) / 2) * H : H / 2;
-    return `${x},${y}`;
+  const valenceToY = v => H - ((v + 1) / 2) * H;
+
+  // Each point reflects the average of the emotion words picked that session
+  // (falling back to the affect grid coordinate if no words were picked),
+  // plus the valence range across those words to show how mixed the moment was.
+  const points = history.map(e => {
+    const words = e.emotionWords || [];
+    if (words.length > 0) {
+      const valences = words.map(w => w.valence);
+      const arousals = words.map(w => w.arousal);
+      const avg = arr => arr.reduce((s, v) => s + v, 0) / arr.length;
+      return {
+        coord: { valence: avg(valences), arousal: avg(arousals) },
+        spread: words.length > 1 ? [Math.min(...valences), Math.max(...valences)] : null,
+      };
+    }
+    return { coord: e.affectCoord || { valence: 0, arousal: 0 }, spread: null };
   });
+
+  const pts = points.map((p, i) => ({
+    x: (i / Math.max(points.length - 1, 1)) * W,
+    y: valenceToY(p.coord.valence),
+  }));
 
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: 'visible' }}>
       {pts.length > 1 && (
         <polyline
-          points={pts.join(' ')}
+          points={pts.map(p => `${p.x},${p.y}`).join(' ')}
           fill="none"
           stroke="var(--sage)"
           strokeWidth="2"
@@ -117,9 +135,23 @@ function MoodChart({ history }) {
         />
       )}
       {pts.map((pt, i) => {
-        const [x, y] = pt.split(',').map(Number);
-        const color = getQuadrantInfo(history[i].affectCoord).color;
-        return <circle key={i} cx={x} cy={y} r={4} fill={color} />;
+        const { coord, spread } = points[i];
+        const color = getQuadrantInfo(coord).color;
+        return (
+          <g key={i}>
+            {spread && (
+              <line
+                x1={pt.x} x2={pt.x}
+                y1={valenceToY(spread[1])} y2={valenceToY(spread[0])}
+                stroke={color}
+                strokeWidth="3"
+                strokeOpacity="0.25"
+                strokeLinecap="round"
+              />
+            )}
+            <circle cx={pt.x} cy={pt.y} r={4} fill={color} />
+          </g>
+        );
       })}
     </svg>
   );
@@ -159,6 +191,9 @@ function BackupSection() {
       <div style={{ fontSize: 12, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>
         備份與還原
       </div>
+      <p style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7, marginBottom: 14 }}>
+        溫馨提醒：如果清除瀏覽器快取，或使用無痕模式，記錄將會消失喔。
+      </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <button className="btn-secondary" onClick={handleExport} disabled={history.length === 0}>
           📤 匯出紀錄
