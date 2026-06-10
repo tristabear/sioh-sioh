@@ -43,34 +43,32 @@ export default function AffectGridScreen() {
         <div style={{ position: 'relative' }}>
           {/* Axis labels */}
           <div style={{ textAlign: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>激動</div>
-          <div style={{ display: 'flex', alignItems: 'stretch', gap: 6 }}>
-            <div style={{ display: 'flex', alignItems: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', writingMode: 'vertical-rl' }}>負面</div>
-            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 12, aspectRatio: '1 / 1' }}>
-              {QUADRANTS.map(q => {
-                const isSel = selected?.id === q.id;
-                return (
-                  <button
-                    key={q.id}
-                    onClick={() => setSelected(q)}
-                    style={{
-                      borderRadius: 'var(--radius-md)',
-                      border: `1.5px solid ${isSel ? q.color : 'var(--border)'}`,
-                      background: isSel ? q.color : '#fff',
-                      color: isSel ? '#fff' : 'var(--ink)',
-                      fontSize: 16,
-                      fontWeight: 700,
-                      fontFamily: 'var(--font-sans)',
-                      cursor: 'pointer',
-                      transition: 'all 0.18s',
-                      boxShadow: isSel ? `0 4px 14px ${q.color}44` : 'none',
-                    }}
-                  >
-                    {q.label}
-                  </button>
-                );
-              })}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', writingMode: 'vertical-rl' }}>正面</div>
+          <div style={{ position: 'relative', margin: '0 26px', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 12, aspectRatio: '1 / 1' }}>
+            {QUADRANTS.map(q => {
+              const isSel = selected?.id === q.id;
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => setSelected(q)}
+                  style={{
+                    borderRadius: 'var(--radius-md)',
+                    border: `1.5px solid ${isSel ? q.color : 'var(--border)'}`,
+                    background: isSel ? q.color : '#fff',
+                    color: isSel ? '#fff' : 'var(--ink)',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    fontFamily: 'var(--font-sans)',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s',
+                    boxShadow: isSel ? `0 4px 14px ${q.color}44` : 'none',
+                  }}
+                >
+                  {q.label}
+                </button>
+              );
+            })}
+            <div style={{ position: 'absolute', left: -22, top: '50%', transform: 'translateY(-50%)', writingMode: 'vertical-rl', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)' }}>負面</div>
+            <div style={{ position: 'absolute', right: -22, top: '50%', transform: 'translateY(-50%)', writingMode: 'vertical-rl', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)' }}>正面</div>
           </div>
           <div style={{ textAlign: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', marginTop: 6 }}>平靜</div>
         </div>

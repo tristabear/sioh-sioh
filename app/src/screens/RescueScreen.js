@@ -54,7 +54,7 @@ export default function RescueScreen() {
           <button className="btn-primary" onClick={() => setStarted(true)} style={{ maxWidth: 280 }}>
             開始呼吸
           </button>
-          <button className="btn-secondary" style={{ marginTop: 12, maxWidth: 280 }} onClick={() => navigate(-1)}>
+          <button className="btn-secondary" style={{ marginTop: 12, maxWidth: 280 }} onClick={() => navigate(fromCheck ? '/check/emotion' : -1)}>
             先不用了
           </button>
         </div>
@@ -138,7 +138,7 @@ export default function RescueScreen() {
       </div>
 
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate(fromCheck ? '/check/emotion' : -1)}
         style={{ position: 'absolute', bottom: 40, color: 'rgba(250,247,242,0.35)', fontSize: 13, fontFamily: 'var(--font-sans)' }}
       >
         停止
