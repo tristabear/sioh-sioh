@@ -11,6 +11,8 @@ export function AppProvider({ children }) {
     sharingChoice: null, // 'yes' | 'no' | 'unsure'
     whyNotShare: null,   // reason id if sharingChoice === 'no'
     actionChoice: null,  // 'share' | 'photo' | 'text' | 'stay' | 'rescue'
+    journalNote: null,   // text written during '文字紀錄'
+    photoDataUrl: null,  // photo captured during '拍照紀錄'
     srwneResult: null,
     savoringDone: false,
   });
@@ -35,11 +37,11 @@ export function AppProvider({ children }) {
     const next = [entry, ...history].slice(0, 30); // keep last 30
     setHistory(next);
     try { localStorage.setItem('xixi-history', JSON.stringify(next)); } catch {}
-    setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, srwneResult: null, savoringDone: false });
+    setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
   }, [session, history]);
 
   const resetSession = useCallback(() => {
-    setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, srwneResult: null, savoringDone: false });
+    setSession({ symptoms: [], affectCoord: null, emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
   }, []);
 
   // Determine if user needs physiological rescue

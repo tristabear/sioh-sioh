@@ -1,5 +1,8 @@
 /* eslint-disable */
 import { useApp } from '../context/AppContext';
+import { SOMATIC_SYMPTOMS } from '../data/emotions';
+
+const SYMPTOM_LABELS = Object.fromEntries(SOMATIC_SYMPTOMS.map(s => [s.id, s.label]));
 
 export default function HistoryScreen() {
   const { history } = useApp();
@@ -68,7 +71,7 @@ function EntryCard({ entry, index }) {
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {entry.symptoms?.slice(0,3).map(s => (
             <span key={s} style={{ fontSize: 12, fontFamily: 'var(--font-sans)', color: 'var(--muted)', background: 'var(--cream)', padding: '3px 8px', borderRadius: 20, border: '1px solid var(--border)' }}>
-              {s}
+              {SYMPTOM_LABELS[s] || s}
             </span>
           ))}
           {entry.srwneResult && (

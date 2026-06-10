@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { compressImage, generateShareCard, shareOrDownloadImage } from '../utils/media';
 
 const WHY_NOT_OPTIONS = [
   {
@@ -49,7 +50,12 @@ export default function SRWNEScreen() {
   const [whyNotId, setWhyNotId] = useState(null);
   const [actionDone, setActionDone] = useState(null);
   const [timerLeft, setTimerLeft] = useState(60);
+  const [returnPhase, setReturnPhase] = useState('ask');
+  const [journalText, setJournalText] = useState('');
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [shareCardUrl, setShareCardUrl] = useState(null);
   const timerRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const isNegative = (session.affectCoord?.valence ?? 0) < -0.1;
   const emotionWord = session.emotionWord;
@@ -69,9 +75,9 @@ export default function SRWNEScreen() {
     return () => clearInterval(timerRef.current);
   }, [phase]);
 
-  const handleDone = (action) => {
+  const handleDone = (action, extra = {}) => {
     setActionDone(action);
-    saveSession({ actionChoice: action });
+    saveSession({ actionChoice: action, ...extra });
     setPhase('done');
   };
 
@@ -80,8 +86,28 @@ export default function SRWNEScreen() {
     navigate('/rescue');
   };
 
-  const renderActionButtons = (includeSocial) => (
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const dataUrl = await compressImage(file, 720, 0.7);
+    setPhotoPreview(dataUrl);
+    setPhase('photo_record');
+  };
+
+  const photoInput = (
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="image/*"
+      capture="environment"
+      style={{ display: 'none' }}
+      onChange={handlePhotoChange}
+    />
+  );
+
+  const renderActionButtons = (includeSocial, fromPhase) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {photoInput}
       {includeSocial && (
         <button
           className="btn-primary"
@@ -90,10 +116,24 @@ export default function SRWNEScreen() {
           💬 分享給他人
         </button>
       )}
-      <button className="btn-secondary" onClick={() => handleDone('photo')}>
+      <button
+        className="btn-secondary"
+        onClick={() => {
+          setReturnPhase(fromPhase);
+          setPhotoPreview(null);
+          fileInputRef.current?.click();
+        }}
+      >
         📷 拍照紀錄
       </button>
-      <button className="btn-secondary" onClick={() => handleDone('text')}>
+      <button
+        className="btn-secondary"
+        onClick={() => {
+          setReturnPhase(fromPhase);
+          setJournalText(session.journalNote || '');
+          setPhase('text_record');
+        }}
+      >
         ✏️ 文字紀錄
       </button>
       <button className="btn-secondary" onClick={() => { setTimerLeft(60); setPhase('timer'); }}>
@@ -118,6 +158,18 @@ export default function SRWNEScreen() {
           <p style={{ fontSize: 15, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 32, whiteSpace: 'pre-line' }}>
             {msg.body}
           </p>
+          {actionDone === 'text' && journalText && (
+            <div className="card" style={{ width: '100%', marginBottom: 32, textAlign: 'left' }}>
+              <p style={{ fontSize: 14, color: 'var(--ink)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, whiteSpace: 'pre-wrap' }}>
+                {journalText}
+              </p>
+            </div>
+          )}
+          {actionDone === 'photo' && photoPreview && (
+            <div style={{ width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: 32, boxShadow: 'var(--shadow-sm)' }}>
+              <img src={photoPreview} alt="" style={{ width: '100%', display: 'block' }} />
+            </div>
+          )}
           <button className="btn-primary" style={{ maxWidth: 280 }} onClick={() => navigate('/')}>
             回首頁
           </button>
@@ -147,6 +199,95 @@ export default function SRWNEScreen() {
     );
   }
 
+  // ── TEXT RECORD ───────────────────────────────────────────────────────
+  if (phase === 'text_record') {
+    return (
+      <div className="screen fade-up" style={{ padding: '52px 24px 100px' }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 28 }}>
+          {STEP_DOTS.map(i => <div key={i} className={`dot ${i === 4 ? 'active' : ''}`} />)}
+        </div>
+        <div style={{ fontSize: 48, marginBottom: 20 }}>✏️</div>
+        <h1 style={{ fontSize: 24, fontWeight: 900, color: 'var(--forest)', lineHeight: 1.4, marginBottom: 10 }}>
+          寫下此刻的<br />感受
+        </h1>
+        <p style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7, marginBottom: 20 }}>
+          想到什麼就寫什麼，不需要完整或正確。
+        </p>
+        <textarea
+          className="textarea"
+          style={{ marginBottom: 24 }}
+          value={journalText}
+          onChange={(e) => setJournalText(e.target.value)}
+          placeholder="今天，我..."
+          autoFocus
+        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <button
+            className="btn-primary"
+            disabled={!journalText.trim()}
+            onClick={() => handleDone('text', { journalNote: journalText.trim() })}
+          >
+            完成 ✓
+          </button>
+          <button className="btn-secondary" onClick={() => setPhase(returnPhase)}>
+            返回
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── PHOTO RECORD ──────────────────────────────────────────────────────
+  if (phase === 'photo_record') {
+    return (
+      <div className="screen fade-up" style={{ padding: '52px 24px 100px' }}>
+        {photoInput}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 28 }}>
+          {STEP_DOTS.map(i => <div key={i} className={`dot ${i === 4 ? 'active' : ''}`} />)}
+        </div>
+        <div style={{ fontSize: 48, marginBottom: 20 }}>📷</div>
+        <h1 style={{ fontSize: 24, fontWeight: 900, color: 'var(--forest)', lineHeight: 1.4, marginBottom: 16 }}>
+          拍下這一刻
+        </h1>
+        {photoPreview ? (
+          <>
+            <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
+              <img src={photoPreview} alt="" style={{ width: '100%', display: 'block' }} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <button
+                className="btn-primary"
+                onClick={() => handleDone('photo', { photoDataUrl: photoPreview })}
+              >
+                完成 ✓
+              </button>
+              <button className="btn-secondary" onClick={() => fileInputRef.current?.click()}>
+                重新拍攝
+              </button>
+              <button className="btn-secondary" onClick={() => setPhase(returnPhase)}>
+                返回
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 28 }}>
+              拍一張照片，留住此刻的畫面。
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <button className="btn-primary" onClick={() => fileInputRef.current?.click()}>
+                開啟相機
+              </button>
+              <button className="btn-secondary" onClick={() => setPhase(returnPhase)}>
+                返回
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
   // ── YES_SHARE ─────────────────────────────────────────────────────────
   if (phase === 'yes_share') {
     return (
@@ -169,6 +310,30 @@ export default function SRWNEScreen() {
             「我今天感覺到了{emotionWord?.word || '一些情緒'}，想跟你說說。」
           </p>
         </div>
+
+        {shareCardUrl ? (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: 16, boxShadow: 'var(--shadow-md)' }}>
+              <img src={shareCardUrl} alt="" style={{ width: '100%', display: 'block' }} />
+            </div>
+            <button
+              className="btn-secondary"
+              style={{ marginBottom: 10 }}
+              onClick={() => shareOrDownloadImage(shareCardUrl)}
+            >
+              📤 分享圖卡
+            </button>
+          </div>
+        ) : (
+          <button
+            className="btn-secondary"
+            style={{ marginBottom: 24 }}
+            onClick={() => setShareCardUrl(generateShareCard(session))}
+          >
+            🖼️ 製作分享圖卡
+          </button>
+        )}
+
         <button className="btn-primary" onClick={() => handleDone('share')}>
           完成今天的練習 ✓
         </button>
@@ -195,7 +360,7 @@ export default function SRWNEScreen() {
         <p style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7, marginBottom: 20 }}>
           你想怎麼陪陪自己？
         </p>
-        {renderActionButtons(true)}
+        {renderActionButtons(true, 'reframed')}
       </div>
     );
   }
@@ -259,7 +424,7 @@ export default function SRWNEScreen() {
         <p style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 28 }}>
           不需要馬上決定任何事。<br />用最舒服的方式陪陪自己就好。
         </p>
-        {renderActionButtons(false)}
+        {renderActionButtons(false, 'unsure_actions')}
       </div>
     );
   }

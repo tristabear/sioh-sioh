@@ -132,6 +132,22 @@ button {
 }
 .btn-secondary:active { background: rgba(201,160,130,0.08); }
 
+.textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 16px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--ink);
+  resize: vertical;
+}
+.textarea:focus { outline: none; border-color: var(--forest); }
+
 /* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
