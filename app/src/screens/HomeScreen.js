@@ -89,7 +89,7 @@ export default function HomeScreen() {
               <MoodDot coord={history[0].affectCoord} size={40} />
               <div>
                 <div style={{ fontSize: 15, fontWeight: 700 }}>
-                  {history[0].emotionWord?.word || '已完成練習'}
+                  {history[0].emotionWords?.map(w => w.word).join('、') || '已完成練習'}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)' }}>
                   {new Date(history[0].timestamp).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}

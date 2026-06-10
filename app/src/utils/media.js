@@ -72,7 +72,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = Infinity) {
 // Render a Garmin-style "activity summary" card for the session and
 // return it as a PNG data URL.
 export function generateShareCard(session) {
-  const { emotionWord, affectCoord, journalNote } = session || {};
+  const { emotionWords, affectCoord, journalNote } = session || {};
   const { label, color } = getQuadrantInfo(affectCoord);
 
   const W = 750, H = 1000;
@@ -106,8 +106,10 @@ export function generateShareCard(session) {
   ctx.fillText(label, 60, 200);
 
   ctx.fillStyle = '#faf7f2';
-  ctx.font = '900 104px "Noto Serif TC", serif';
-  ctx.fillText(emotionWord?.word || '說不出名字的感受', 60, 350);
+  const emotionText = emotionWords?.map(w => w.word).join('、') || '說不出名字的感受';
+  const emotionFontSize = emotionText.length > 6 ? 64 : 104;
+  ctx.font = `900 ${emotionFontSize}px "Noto Serif TC", serif`;
+  wrapText(ctx, emotionText, 60, 350, W - 120, emotionFontSize, 1);
 
   if (journalNote) {
     ctx.font = '300 28px "Noto Sans TC", sans-serif';

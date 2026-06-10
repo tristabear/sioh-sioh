@@ -60,7 +60,7 @@ export default function HistoryDetailScreen() {
       </div>
 
       <h1 style={{ fontSize: 30, fontWeight: 900, color: 'var(--forest)', marginBottom: 12 }}>
-        {entry.emotionWord?.word || '無命名'}
+        {entry.emotionWords?.map(w => w.word).join('、') || '無命名'}
       </h1>
 
       {entry.affectCoord && (

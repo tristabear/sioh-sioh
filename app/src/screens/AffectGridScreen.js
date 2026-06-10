@@ -35,7 +35,7 @@ export default function AffectGridScreen() {
       <div style={{ padding: '0 20px 16px' }}>
         <div style={{ position: 'relative' }}>
           {/* Axis labels */}
-          <div style={{ textAlign: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>激動</div>
+          <div style={{ textAlign: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>強烈</div>
           <div style={{ position: 'relative', margin: '0 26px', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 12, aspectRatio: '1 / 1' }}>
             {QUADRANTS.map(q => {
               const isSel = selected?.id === q.id;

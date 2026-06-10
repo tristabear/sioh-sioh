@@ -72,7 +72,7 @@ function EntryCard({ entry, index }) {
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
           <div style={{ fontSize: 16, fontWeight: 700 }}>
-            {entry.emotionWord?.word || '無命名'}
+            {entry.emotionWords?.map(w => w.word).join('、') || '無命名'}
           </div>
           <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textAlign: 'right' }}>
             {date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}<br />

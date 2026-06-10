@@ -7,7 +7,7 @@ import { EMOTION_WORDS } from '../data/emotions';
 export default function EmotionScreen() {
   const navigate = useNavigate();
   const { session, updateSession } = useApp();
-  const [selected, setSelected] = useState(session.emotionWord || null);
+  const [selected, setSelected] = useState(session.emotionWords || []);
 
   // Show only words from the same quadrant as the user's affect choice
   const coord = session.affectCoord || { valence: 0, arousal: 0 };
@@ -38,7 +38,7 @@ export default function EmotionScreen() {
           這個感受<br />有名字嗎？
         </h1>
         <p style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7 }}>
-          選一個最接近的詞。光是命名這個動作，就能讓大腦慢慢穩定下來。
+          選一個或多個最接近的詞。光是命名這個動作，就能讓大腦慢慢穩定下來。
         </p>
       </div>
 
@@ -50,7 +50,7 @@ export default function EmotionScreen() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {displayWords.map((w, i) => {
             const color = getWordColor(w);
-            const isSel = selected?.id === w.id;
+            const isSel = selected.some(s => s.id === w.id);
             return (
               <button
                 key={w.id}
@@ -68,7 +68,7 @@ export default function EmotionScreen() {
                   transition: 'all 0.18s',
                   boxShadow: isSel ? `0 4px 14px ${color}44` : 'none',
                 }}
-                onClick={() => setSelected(isSel ? null : w)}
+                onClick={() => setSelected(isSel ? selected.filter(s => s.id !== w.id) : [...selected, w])}
               >
                 {w.word}
               </button>
@@ -78,11 +78,13 @@ export default function EmotionScreen() {
       </div>
 
       {/* Selected display */}
-      {selected && (
+      {selected.length > 0 && (
         <div className="fade-up" style={{ margin: '0 20px 20px', padding: '16px 20px', background: 'var(--forest)', borderRadius: 'var(--radius-sm)', color: '#faf7f2' }}>
-          <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 2, marginBottom: 4 }}>{selected.word}</div>
+          <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 2, marginBottom: 4 }}>
+            {selected.map(w => w.word).join('、')}
+          </div>
           <div style={{ fontSize: 12, fontFamily: 'var(--font-sans)', opacity: 0.65, fontWeight: 300 }}>
-            光是說出這個字，你的大腦就已經在幫你調節了。
+            光是說出這些字，你的大腦就已經在幫你調節了。
           </div>
         </div>
       )}
@@ -90,9 +92,9 @@ export default function EmotionScreen() {
       <div style={{ padding: '0 20px' }}>
         <button
           className="btn-primary"
-          disabled={!selected}
+          disabled={selected.length === 0}
           onClick={() => {
-            updateSession({ emotionWord: selected });
+            updateSession({ emotionWords: selected });
             navigate('/check/srwne');
           }}
         >
@@ -102,7 +104,7 @@ export default function EmotionScreen() {
           className="btn-secondary"
           style={{ marginTop: 10 }}
           onClick={() => {
-            updateSession({ emotionWord: null });
+            updateSession({ emotionWords: [] });
             navigate('/check/srwne');
           }}
         >

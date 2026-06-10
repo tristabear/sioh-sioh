@@ -58,7 +58,9 @@ export default function SRWNEScreen() {
   const fileInputRef = useRef(null);
 
   const isNegative = (session.affectCoord?.valence ?? 0) < -0.1;
-  const emotionWord = session.emotionWord;
+  const isCalmPositive = (session.affectCoord?.valence ?? 0) > 0 && (session.affectCoord?.arousal ?? 0) < 0;
+  const emotionWords = session.emotionWords || [];
+  const emotionLabel = emotionWords.map(w => w.word).join('、');
 
   useEffect(() => {
     if (phase !== 'timer') return;
@@ -307,7 +309,7 @@ export default function SRWNEScreen() {
             可以這樣開口
           </div>
           <p style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9 }}>
-            「我今天感覺到了{emotionWord?.word || '一些情緒'}，想跟你說說。」
+            「我今天感覺到了{emotionLabel || '一些情緒'}，想跟你說說。」
           </p>
         </div>
 
@@ -411,6 +413,24 @@ export default function SRWNEScreen() {
     );
   }
 
+  // ── NO (calm positive) → skip the "why not" question ───────────────────
+  if (phase === 'no_share_skip') {
+    return (
+      <div className="screen fade-up" style={{ padding: '52px 24px 100px' }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 28 }}>
+          {STEP_DOTS.map(i => <div key={i} className={`dot ${i === 4 ? 'active' : ''}`} />)}
+        </div>
+        <h1 style={{ fontSize: 24, fontWeight: 900, color: 'var(--forest)', lineHeight: 1.4, marginBottom: 12 }}>
+          好的，<br />這份感受留給自己也很好
+        </h1>
+        <p style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 28 }}>
+          不是每個好心情都需要說出口，你想怎麼陪陪自己呢？
+        </p>
+        {renderActionButtons(false, 'no_share_skip')}
+      </div>
+    );
+  }
+
   // ── UNSURE → limited actions ──────────────────────────────────────────
   if (phase === 'unsure_actions') {
     return (
@@ -436,9 +456,9 @@ export default function SRWNEScreen() {
         {STEP_DOTS.map(i => <div key={i} className={`dot ${i === 4 ? 'active' : ''}`} />)}
       </div>
 
-      {emotionWord ? (
+      {emotionLabel ? (
         <div className="card fade-up" style={{ marginBottom: 24, background: 'var(--forest)', color: '#faf7f2', border: 'none' }}>
-          <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 2, marginBottom: 8 }}>{emotionWord.word}</div>
+          <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 2, marginBottom: 8 }}>{emotionLabel}</div>
           <p style={{ fontSize: 13, fontFamily: 'var(--font-sans)', fontWeight: 300, opacity: 0.8, lineHeight: 1.8 }}>
             情緒是你內心狀態的訊號。<br />能夠說出它的名字，你已經在照顧自己了。
           </p>
@@ -472,7 +492,7 @@ export default function SRWNEScreen() {
           className="btn-secondary"
           onClick={() => {
             updateSession({ sharingChoice: 'no' });
-            setPhase('why_not');
+            setPhase(isCalmPositive ? 'no_share_skip' : 'why_not');
           }}
         >
           不想
