@@ -90,7 +90,7 @@ export default function HomeScreen() {
                 <div style={{ fontSize: 15, fontWeight: 700 }}>
                   {history[0].emotionWord?.word || '已完成練習'}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)' }}>
+                <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)' }}>
                   {new Date(history[0].timestamp).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
@@ -131,7 +131,7 @@ function MoodHistory({ history }) {
       {history.map((entry, i) => (
         <div key={entry.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
           <MoodDot coord={entry.affectCoord} size={28} />
-          <div style={{ fontSize: 9, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)' }}>
+          <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)' }}>
             {new Date(entry.timestamp).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' })}
           </div>
         </div>

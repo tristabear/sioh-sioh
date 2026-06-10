@@ -9,18 +9,15 @@ export default function EmotionScreen() {
   const { session, updateSession } = useApp();
   const [selected, setSelected] = useState(session.emotionWord || null);
 
-  // Sort words by proximity to the user's affect coord
+  // Show only words from the same quadrant as the user's affect choice
   const coord = session.affectCoord || { valence: 0, arousal: 0 };
-  const sorted = [...EMOTION_WORDS].sort((a, b) => {
-    const distA = Math.hypot(a.valence - coord.valence, a.arousal - coord.arousal);
-    const distB = Math.hypot(b.valence - coord.valence, b.arousal - coord.arousal);
-    return distA - distB;
-  });
-  const suggested = sorted.slice(0, 8);
-  const rest = sorted.slice(8);
-
-  const [showAll, setShowAll] = useState(false);
-  const displayWords = showAll ? sorted : suggested;
+  const displayWords = EMOTION_WORDS
+    .filter(w => (w.valence >= 0) === (coord.valence >= 0) && (w.arousal >= 0) === (coord.arousal >= 0))
+    .sort((a, b) => {
+      const distA = Math.hypot(a.valence - coord.valence, a.arousal - coord.arousal);
+      const distB = Math.hypot(b.valence - coord.valence, b.arousal - coord.arousal);
+      return distA - distB;
+    });
 
   const getWordColor = (word) => {
     if (word.valence < -0.3 && word.arousal > 0.3) return 'var(--clay)';
@@ -45,10 +42,10 @@ export default function EmotionScreen() {
         </p>
       </div>
 
-      {/* Suggested words */}
+      {/* Words matching the chosen quadrant */}
       <div style={{ padding: '4px 20px 16px' }}>
-        <div style={{ fontSize: 11, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>
-          最接近你位置的詞
+        <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>
+          符合這個感受的詞
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {displayWords.map((w, i) => {
@@ -78,15 +75,6 @@ export default function EmotionScreen() {
             );
           })}
         </div>
-
-        {!showAll && rest.length > 0 && (
-          <button
-            style={{ marginTop: 16, fontSize: 13, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}
-            onClick={() => setShowAll(true)}
-          >
-            顯示更多詞 ({rest.length})
-          </button>
-        )}
       </div>
 
       {/* Selected display */}

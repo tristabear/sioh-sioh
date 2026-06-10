@@ -29,7 +29,7 @@ export default function HistoryScreen() {
       {history.length >= 3 && (
         <div style={{ padding: '0 24px 24px' }}>
           <div className="card">
-            <div style={{ fontSize: 11, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 14 }}>情緒軌跡</div>
+            <div style={{ fontSize: 12, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 14 }}>情緒軌跡</div>
             <MoodChart history={history.slice(0, 14).reverse()} />
           </div>
         </div>
@@ -60,19 +60,19 @@ function EntryCard({ entry, index }) {
           <div style={{ fontSize: 16, fontWeight: 700 }}>
             {entry.emotionWord?.word || '無命名'}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textAlign: 'right' }}>
+          <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textAlign: 'right' }}>
             {date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}<br />
             {date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {entry.symptoms?.slice(0,3).map(s => (
-            <span key={s} style={{ fontSize: 11, fontFamily: 'var(--font-sans)', color: 'var(--muted)', background: 'var(--cream)', padding: '3px 8px', borderRadius: 20, border: '1px solid var(--border)' }}>
+            <span key={s} style={{ fontSize: 12, fontFamily: 'var(--font-sans)', color: 'var(--muted)', background: 'var(--cream)', padding: '3px 8px', borderRadius: 20, border: '1px solid var(--border)' }}>
               {s}
             </span>
           ))}
           {entry.srwneResult && (
-            <span style={{ fontSize: 11, fontFamily: 'var(--font-sans)', color: entry.srwneResult === 'autonomous' ? 'var(--sage)' : 'var(--clay)', background: entry.srwneResult === 'autonomous' ? 'rgba(58,107,126,0.12)' : 'rgba(200,111,89,0.12)', padding: '3px 8px', borderRadius: 20 }}>
+            <span style={{ fontSize: 12, fontFamily: 'var(--font-sans)', color: entry.srwneResult === 'autonomous' ? 'var(--sage)' : 'var(--clay)', background: entry.srwneResult === 'autonomous' ? 'rgba(58,107,126,0.12)' : 'rgba(200,111,89,0.12)', padding: '3px 8px', borderRadius: 20 }}>
               {entry.srwneResult === 'autonomous' ? '自主選擇' : entry.srwneResult === 'controlled' ? '被迫沉默' : ''}
             </span>
           )}
