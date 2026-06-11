@@ -251,33 +251,38 @@ export default function EmotionScreen() {
             transform: `translate(${offset.x}px, ${offset.y}px)`,
           }}
         >
-          {/* User's affect-coordinate marker, with a faint halo */}
-          <div
-            style={{
-              position: 'absolute',
-              left: centerPos.x,
-              top: centerPos.y,
-              width: 140,
-              height: 140,
-              borderRadius: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: `radial-gradient(circle, ${withAlpha(centerColor, 0.16)} 0%, transparent 70%)`,
-              pointerEvents: 'none',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              left: centerPos.x,
-              top: centerPos.y,
-              width: 10,
-              height: 10,
-              borderRadius: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: centerColor,
-              pointerEvents: 'none',
-            }}
-          />
+          {/* User's affect-coordinate marker, with a faint halo —
+              only shown until a word is picked, once it's served its purpose */}
+          {selected.length === 0 && (
+            <>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: centerPos.x,
+                  top: centerPos.y,
+                  width: 140,
+                  height: 140,
+                  borderRadius: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: `radial-gradient(circle, ${withAlpha(centerColor, 0.16)} 0%, transparent 70%)`,
+                  pointerEvents: 'none',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  left: centerPos.x,
+                  top: centerPos.y,
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: centerColor,
+                  pointerEvents: 'none',
+                }}
+              />
+            </>
+          )}
 
           {words.map(({ word: w, color, size, x, y }) => {
             const isSel = selected.some(s => s.id === w.id);
