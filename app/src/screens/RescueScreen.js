@@ -5,8 +5,8 @@ import { useApp } from '../context/AppContext';
 
 // Inhale : second-inhale : exhale ratio is kept close to 2:1:5 across paces.
 const PACES = [
-  { id: 'slow', label: '緩慢', sub: '吸氣 3秒 / 再吸 1.5秒 / 吐氣 8秒', durations: [3000, 1500, 8000] },
-  { id: 'standard', label: '標準', sub: '吸氣 2秒 / 再吸 1秒 / 吐氣 5秒', durations: [2000, 1000, 5000] },
+  { id: 'slow', label: '🌊 緩慢', sub: '吸氣 3秒 / 再吸 1.5秒 / 吐氣 8秒', durations: [3000, 1500, 8000] },
+  { id: 'standard', label: '🌫️ 標準', sub: '吸氣 2秒 / 再吸 1秒 / 吐氣 5秒', durations: [2000, 1000, 5000] },
   { id: 'gentle', label: '🌸 輕柔', sub: '吸氣 1.5秒 / 再吸 0.8秒 / 吐氣 4秒', durations: [1500, 800, 4000] },
 ];
 
@@ -22,6 +22,7 @@ export default function RescueScreen() {
   const [done, setDone] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const timerRef = useRef(null);
+  const intervalRef = useRef(null);
   const fromCheck = session.affectCoord !== null;
 
   const PHASES = useMemo(() => {
@@ -53,13 +54,20 @@ export default function RescueScreen() {
 
   // Per-second countdown for the current phase, reset whenever the phase changes.
   useEffect(() => {
+    clearInterval(intervalRef.current);
     if (!started || done) return;
-    setCountdown(Math.round(phase.duration / 1000));
-    const interval = setInterval(() => {
-      setCountdown(c => (c > 1 ? c - 1 : c));
+    setCountdown(Math.round(PHASES[phaseIdx].duration / 1000));
+    intervalRef.current = setInterval(() => {
+      setCountdown(c => {
+        if (c <= 1) {
+          clearInterval(intervalRef.current);
+          return 0;
+        }
+        return c - 1;
+      });
     }, 1000);
-    return () => clearInterval(interval);
-  }, [started, done, phaseIdx, phase.duration]);
+    return () => clearInterval(intervalRef.current);
+  }, [phaseIdx, started]);
 
   if (!started) {
     return (
@@ -71,7 +79,7 @@ export default function RescueScreen() {
             雙次吸氣＋長吐氣，直接刺激迷走神經，<br />是目前科學上最快速的自律神經穩定方法。
           </p>
           <p style={{ fontSize: 13, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, marginBottom: 24 }}>
-            5 個循環，約 50 秒
+            5 個循環，約 35-60 秒
           </p>
 
           <div style={{ width: '100%', maxWidth: 280, display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
