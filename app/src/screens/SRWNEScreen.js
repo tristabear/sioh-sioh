@@ -126,7 +126,7 @@ export default function SRWNEScreen() {
           fileInputRef.current?.click();
         }}
       >
-        📷 拍照紀錄
+        📷 拍照記錄
       </button>
       <button
         className="btn-secondary"
@@ -136,7 +136,7 @@ export default function SRWNEScreen() {
           setPhase('text_record');
         }}
       >
-        ✏️ 文字紀錄
+        ✏️ 文字記錄
       </button>
       <button className="btn-secondary" onClick={() => { setTimerLeft(60); setPhase('timer'); }}>
         🕐 就在這邊（計時）

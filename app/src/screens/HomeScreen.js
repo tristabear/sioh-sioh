@@ -72,7 +72,7 @@ export default function HomeScreen() {
         >
           <div style={{ fontSize: 36 }}>🌬️</div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>急需呼吸</div>
+            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>急須呼吸</div>
             <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
               壓力很大？先來一分鐘的生理嘆息
             </div>

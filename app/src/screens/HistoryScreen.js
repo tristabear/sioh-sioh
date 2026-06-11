@@ -156,7 +156,7 @@ function BackupSection() {
       const data = JSON.parse(await file.text());
       if (!Array.isArray(data)) throw new Error('invalid');
       importHistory(data);
-      setMessage(`已匯入 ${data.length} 筆紀錄`);
+      setMessage(`已匯入 ${data.length} 筆記錄`);
     } catch {
       setMessage('匯入失敗，請確認檔案格式');
     }
@@ -172,10 +172,10 @@ function BackupSection() {
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <button className="btn-secondary" onClick={handleExport} disabled={history.length === 0}>
-          📤 匯出紀錄
+          📤 匯出記錄
         </button>
         <button className="btn-secondary" onClick={() => fileInputRef.current?.click()}>
-          📥 匯入紀錄
+          📥 匯入記錄
         </button>
         <input ref={fileInputRef} type="file" accept="application/json" style={{ display: 'none' }} onChange={handleImportFile} />
       </div>

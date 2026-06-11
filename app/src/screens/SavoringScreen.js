@@ -8,7 +8,7 @@ import { getQuadrantInfo } from '../utils/media';
 const SRWNE_FEEDBACK = {
   controlled: {
     title: '你現在承受著很多',
-    body: '你選擇了沉默，但那份重量還在身體裡。這不是你的錯——有時候環境讓我們沒有空間說出口。\n\n下一次，試著問自己：「我有沒有辦法用一個小動作，讓自己稍微輕鬆一點點？」',
+    body: '你選擇了沉默，但那份重量還在身體裡。這不是你的錯，有時候環境讓我們沒有空間說出口。\n\n下一次，試著問自己：「我有沒有辦法用一個小動作，讓自己稍微輕鬆一點點？」',
     color: 'var(--clay)',
     icon: '🫂',
   },

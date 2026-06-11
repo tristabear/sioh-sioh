@@ -33,10 +33,10 @@ export default function HistoryDetailScreen() {
     return (
       <div className="screen" style={{ padding: '52px 24px 100px', textAlign: 'center' }}>
         <p style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, marginBottom: 24 }}>
-          找不到這筆紀錄。
+          找不到這筆記錄。
         </p>
         <button className="btn-secondary" onClick={() => navigate('/history')}>
-          ‹ 回到紀錄
+          ‹ 回到記錄
         </button>
       </div>
     );
@@ -52,7 +52,7 @@ export default function HistoryDetailScreen() {
         style={{ width: 'auto', padding: '8px 16px', marginBottom: 20 }}
         onClick={() => navigate('/history')}
       >
-        ‹ 回到紀錄
+        ‹ 回到記錄
       </button>
 
       <div style={{ fontSize: 13, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', marginBottom: 8 }}>
@@ -113,7 +113,7 @@ export default function HistoryDetailScreen() {
       {entry.journalNote && (
         <div style={{ marginTop: 24 }}>
           <div style={{ fontSize: 12, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 10 }}>
-            文字紀錄
+            文字記錄
           </div>
           <div className="card" style={{ textAlign: 'left' }}>
             <p style={{ fontSize: 14, color: 'var(--ink)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, whiteSpace: 'pre-wrap' }}>
@@ -126,7 +126,7 @@ export default function HistoryDetailScreen() {
       {entry.photoDataUrl && (
         <div style={{ marginTop: 24 }}>
           <div style={{ fontSize: 12, color: 'var(--sage)', fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 10 }}>
-            照片紀錄
+            照片記錄
           </div>
           <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
             <img src={entry.photoDataUrl} alt="" style={{ width: '100%', display: 'block' }} />
