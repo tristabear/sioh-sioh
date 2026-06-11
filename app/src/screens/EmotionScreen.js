@@ -5,20 +5,51 @@ import { useApp } from '../context/AppContext';
 import { EMOTION_WORDS } from '../data/emotions';
 import { getQuadrantInfo } from '../utils/media';
 
-const CELL_W = 340;
-const CELL_H = 210;
-const FONT_SIZE = 14;
+const CANVAS_SIZE = 750;
+const VIEWPORT_HEIGHT = 520;
 
-// Four quadrants of Russell's circumplex, matching AffectGridScreen's
-// 2x2 layout: high-arousal row on top, negative valence on the left.
-// Each cell aligns its words toward the canvas center so the four
-// groups read as one tight cluster instead of four separate corners.
-const QUADRANT_DEFS = [
-  { id: 'HA_NEG', test: w => w.valence < 0 && w.arousal >= 0, justify: 'flex-end', align: 'flex-end' },
-  { id: 'HA_POS', test: w => w.valence >= 0 && w.arousal >= 0, justify: 'flex-start', align: 'flex-end' },
-  { id: 'LA_NEG', test: w => w.valence < 0 && w.arousal < 0, justify: 'flex-end', align: 'flex-start' },
-  { id: 'LA_POS', test: w => w.valence >= 0 && w.arousal < 0, justify: 'flex-start', align: 'flex-start' },
-];
+// Convert a #rrggbb color into an rgba() string with the given alpha.
+function withAlpha(hex, alpha) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Map a -1..1 valence/arousal coordinate onto the 750x750 fog canvas.
+// Right = positive valence ("感覺好"), top = positive arousal ("能量高").
+function toCanvasPos({ valence, arousal }) {
+  return {
+    x: ((valence + 1) / 2) * CANVAS_SIZE,
+    y: ((1 - arousal) / 2) * CANVAS_SIZE,
+  };
+}
+
+function wordSize(word) {
+  const len = Array.from(word).length;
+  if (len <= 2) return 60;
+  if (len === 3) return 68;
+  return 80;
+}
+
+// Fog thickens with distance from the viewport's center point — words
+// drifting further from view fade toward the mist.
+function fogOpacity(dist) {
+  if (dist < 80) return 1.0;
+  if (dist < 160) return 0.8 - ((dist - 80) / 80) * 0.3;
+  if (dist < 260) return 0.45 - ((dist - 160) / 100) * 0.3;
+  return 0.08;
+}
+
+const EDGE_LABEL_STYLE = {
+  position: 'absolute',
+  opacity: 0.28,
+  fontSize: 11,
+  fontFamily: 'var(--font-sans)',
+  color: 'var(--ink)',
+  pointerEvents: 'none',
+};
 
 export default function EmotionScreen() {
   const navigate = useNavigate();
@@ -26,34 +57,28 @@ export default function EmotionScreen() {
   const coord = session.affectCoord || { valence: 0, arousal: 0 };
   const [selected, setSelected] = useState([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [viewportWidth, setViewportWidth] = useState(0);
   const viewportRef = useRef(null);
   const dragRef = useRef(null);
 
-  // Group words by quadrant (same quadrant = same cluster), sorted so the
-  // words closest to affectCoord come first within their quadrant.
-  const quadrants = useMemo(() => {
-    const withMeta = EMOTION_WORDS.map(w => {
-      const dist = Math.hypot(w.valence - coord.valence, w.arousal - coord.arousal);
-      return { word: w, dist, color: getQuadrantInfo(w).color };
-    });
+  // Place every word on the canvas once, by its own valence/arousal.
+  const words = useMemo(() => EMOTION_WORDS.map(w => ({
+    word: w,
+    color: getQuadrantInfo(w).color,
+    size: wordSize(w.word),
+    ...toCanvasPos(w),
+  })), []);
 
-    return QUADRANT_DEFS.map(q => ({
-      ...q,
-      words: withMeta.filter(m => q.test(m.word)).sort((a, b) => a.dist - b.dist),
-    }));
-  }, [coord.valence, coord.arousal]);
+  const centerPos = useMemo(() => toCanvasPos(coord), [coord.valence, coord.arousal]);
+  const centerColor = getQuadrantInfo(coord).color;
 
-  // Center the canvas on the quadrant containing affectCoord.
+  // Center the canvas on the user's affect coordinate.
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const activeIndex = QUADRANT_DEFS.findIndex(q => q.test(coord));
-    const col = activeIndex % 2;
-    const row = Math.floor(activeIndex / 2);
-    const cellCenterX = col * CELL_W + CELL_W / 2;
-    const cellCenterY = row * CELL_H + CELL_H / 2;
-    setOffset({ x: rect.width / 2 - cellCenterX, y: rect.height / 2 - cellCenterY });
+    setViewportWidth(rect.width);
+    setOffset({ x: rect.width / 2 - centerPos.x, y: VIEWPORT_HEIGHT / 2 - centerPos.y });
   }, []);
 
   const toggleWord = (w) => {
@@ -103,8 +128,12 @@ export default function EmotionScreen() {
     dragRef.current = null;
   };
 
+  // The canvas point currently sitting at the viewport's center — every
+  // word's fog opacity is measured against this point, recomputed on drag.
+  const focus = { x: viewportWidth / 2 - offset.x, y: VIEWPORT_HEIGHT / 2 - offset.y };
+
   return (
-    <div className="screen" style={{ padding: '0 0 calc(64px + var(--safe-bottom)) 0', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div className="screen" style={{ padding: '0 0 calc(64px + var(--safe-bottom)) 0', display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '52px 24px 16px' }}>
         <div style={{ display: 'flex', gap: 6, marginBottom: 20 }}>
           {[1,2,3,4,5].map(i => (
@@ -130,10 +159,10 @@ export default function EmotionScreen() {
         </div>
       </div>
 
-      {/* Word canvas — drag to pan */}
+      {/* Fog canvas — drag to pan */}
       <div
         ref={viewportRef}
-        style={{ position: 'relative', flex: 1, minHeight: 280, overflow: 'hidden', touchAction: 'none', cursor: 'grab' }}
+        style={{ position: 'relative', height: VIEWPORT_HEIGHT, flexShrink: 0, overflow: 'hidden', touchAction: 'none', cursor: 'grab' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -144,59 +173,92 @@ export default function EmotionScreen() {
             position: 'absolute',
             left: 0,
             top: 0,
+            width: CANVAS_SIZE,
+            height: CANVAS_SIZE,
             transform: `translate(${offset.x}px, ${offset.y}px)`,
-            display: 'grid',
-            gridTemplateColumns: `${CELL_W}px ${CELL_W}px`,
-            gridTemplateRows: `${CELL_H}px ${CELL_H}px`,
-            width: CELL_W * 2,
-            height: CELL_H * 2,
           }}
         >
-          {quadrants.map(q => (
-            <div
-              key={q.id}
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignContent: q.align,
-                alignItems: 'flex-start',
-                justifyContent: q.justify,
-                gap: '3px 6px',
-                padding: 10,
-              }}
-            >
-              {q.words.map(({ word: w, color }) => {
-                const isSel = selected.some(s => s.id === w.id);
-                const disabled = selected.length >= 2 && !isSel;
+          {/* User's affect-coordinate marker, with a faint halo */}
+          <div
+            style={{
+              position: 'absolute',
+              left: centerPos.x,
+              top: centerPos.y,
+              width: 140,
+              height: 140,
+              borderRadius: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: `radial-gradient(circle, ${withAlpha(centerColor, 0.16)} 0%, transparent 70%)`,
+              pointerEvents: 'none',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: centerPos.x,
+              top: centerPos.y,
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: centerColor,
+              pointerEvents: 'none',
+            }}
+          />
 
-                return (
-                  <button
-                    key={w.id}
-                    onClick={() => toggleWord(w)}
-                    style={{
-                      fontSize: FONT_SIZE,
-                      lineHeight: 1.3,
-                      fontFamily: 'var(--font-sans)',
-                      fontWeight: isSel ? 700 : 400,
-                      color,
-                      whiteSpace: 'nowrap',
-                      padding: '3px 8px',
-                      borderRadius: 14,
-                      background: isSel ? `${color}26` : 'transparent',
-                      border: isSel ? `1px solid ${color}` : '1px solid transparent',
-                      opacity: disabled ? 0.25 : 1,
-                      pointerEvents: disabled ? 'none' : 'auto',
-                      transition: 'opacity 0.18s, background 0.18s, border 0.18s',
-                    }}
-                  >
-                    {w.word}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
+          {words.map(({ word: w, color, size, x, y }) => {
+            const isSel = selected.some(s => s.id === w.id);
+            const disabled = selected.length >= 2 && !isSel;
+            const dist = Math.hypot(x - focus.x, y - focus.y);
+            const opacity = disabled ? 0.06 : fogOpacity(dist);
+            const centerAlpha = isSel ? 0.40 : 0.25;
+
+            return (
+              <div
+                key={w.id}
+                onClick={() => !disabled && toggleWord(w)}
+                style={{
+                  position: 'absolute',
+                  left: x - size / 2,
+                  top: y - size / 2,
+                  width: size,
+                  height: size,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  background: `radial-gradient(circle, ${withAlpha(color, centerAlpha)} 0%, ${withAlpha(color, 0.08)} 55%, transparent 100%)`,
+                  color,
+                  fontSize: isSel ? 17 : 15,
+                  fontWeight: isSel ? 700 : 400,
+                  fontFamily: 'var(--font-serif)',
+                  textAlign: 'center',
+                  lineHeight: 1.2,
+                  border: 'none',
+                  outline: 'none',
+                  opacity,
+                  pointerEvents: disabled ? 'none' : 'auto',
+                  cursor: disabled ? 'default' : 'pointer',
+                  userSelect: 'none',
+                  transition: 'opacity 0.25s, font-size 0.15s, background 0.2s',
+                }}
+              >
+                {w.word}
+              </div>
+            );
+          })}
         </div>
+
+        {/* Edge labels — fixed to the viewport, not the panning canvas */}
+        <div style={{ ...EDGE_LABEL_STYLE, top: 10, left: 0, right: 0, textAlign: 'center' }}>能量高</div>
+        <div style={{ ...EDGE_LABEL_STYLE, bottom: 10, left: 0, right: 0, textAlign: 'center' }}>能量低</div>
+        <div style={{ ...EDGE_LABEL_STYLE, left: 10, top: '50%', transform: 'translateY(-50%)', writingMode: 'vertical-rl' }}>感覺不好</div>
+        <div style={{ ...EDGE_LABEL_STYLE, right: 10, top: '50%', transform: 'translateY(-50%)', writingMode: 'vertical-rl' }}>感覺好</div>
       </div>
+
+      <p style={{ opacity: 0.32, fontSize: 11, textAlign: 'center', fontFamily: 'var(--font-sans)', color: 'var(--ink)', margin: '10px 0 0' }}>
+        拖曳畫布，撥開情緒的霧
+      </p>
 
       {/* Definition card */}
       {selected.length > 0 && (
