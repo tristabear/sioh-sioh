@@ -139,7 +139,7 @@ export async function shareOrDownloadImage(dataUrl, filename = 'sioh-sioh-share.
     const blob = await (await fetch(dataUrl)).blob();
     const file = new File([blob], filename, { type: blob.type });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: '惜惜', text: '今天的情緒紀錄' });
+      await navigator.share({ files: [file], title: '惜惜', text: '今天的情緒記錄' });
       return;
     }
   } catch (e) {

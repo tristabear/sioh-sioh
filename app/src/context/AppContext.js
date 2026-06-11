@@ -12,8 +12,8 @@ export function AppProvider({ children }) {
     sharingChoice: null, // 'yes' | 'no' | 'unsure'
     whyNotShare: null,   // reason id if sharingChoice === 'no'
     actionChoice: null,  // 'share' | 'photo' | 'text' | 'stay' | 'rescue'
-    journalNote: null,   // text written during '文字紀錄'
-    photoDataUrl: null,  // photo captured during '拍照紀錄'
+    journalNote: null,   // text written during '文字記錄'
+    photoDataUrl: null,  // photo captured during '拍照記錄'
     srwneResult: null,
     savoringDone: false,
   });

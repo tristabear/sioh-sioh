@@ -9,8 +9,8 @@ const SYMPTOM_LABELS = Object.fromEntries(SOMATIC_SYMPTOMS.map(s => [s.id, s.lab
 
 const ACTION_LABELS = {
   share: '💬 分享給他人',
-  photo: '📷 拍照紀錄',
-  text: '✏️ 文字紀錄',
+  photo: '📷 拍照記錄',
+  text: '✏️ 文字記錄',
   stay: '🌿 靜靜陪伴自己',
   rescue: '🌬️ 呼吸練習',
   enough: '🌱 先這樣就足夠',
