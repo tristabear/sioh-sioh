@@ -72,7 +72,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = Infinity) {
 // Render a Garmin-style "activity summary" card for the session and
 // return it as a PNG data URL.
 export function generateShareCard(session) {
-  const { emotionWords, affectCoord, journalNote } = session || {};
+  const { emotionWord, candidateWords, affectCoord, journalNote } = session || {};
   const { label, color } = getQuadrantInfo(affectCoord);
 
   const W = 750, H = 1000;
@@ -106,15 +106,24 @@ export function generateShareCard(session) {
   ctx.fillText(label, 60, 200);
 
   ctx.fillStyle = '#faf7f2';
-  const emotionText = emotionWords?.map(w => w.word).join('、') || '說不出名字的感受';
+  const emotionText = emotionWord?.word || '說不出名字的感受';
   const emotionFontSize = emotionText.length > 6 ? 64 : 104;
   ctx.font = `900 ${emotionFontSize}px "Noto Serif TC", serif`;
   wrapText(ctx, emotionText, 60, 350, W - 120, emotionFontSize, 1);
 
+  let nextY = 440;
+  if (candidateWords?.length === 2 && emotionWord) {
+    ctx.font = '300 26px "Noto Sans TC", sans-serif';
+    ctx.fillStyle = 'rgba(250,247,242,0.85)';
+    const journeyText = `你感受到了 ${candidateWords[0].word} 和 ${candidateWords[1].word}，你學會更精確地說出它：${emotionWord.word}`;
+    wrapText(ctx, journeyText, 60, nextY, W - 120, 40, 3);
+    nextY += 130;
+  }
+
   if (journalNote) {
     ctx.font = '300 28px "Noto Sans TC", sans-serif';
     ctx.fillStyle = 'rgba(250,247,242,0.85)';
-    wrapText(ctx, journalNote, 60, 440, W - 120, 44, 6);
+    wrapText(ctx, journalNote, 60, nextY, W - 120, 44, 6);
   }
 
   ctx.font = '300 24px "Noto Sans TC", sans-serif';

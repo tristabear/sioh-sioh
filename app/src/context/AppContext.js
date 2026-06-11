@@ -7,7 +7,8 @@ export function AppProvider({ children }) {
   const [session, setSession] = useState({
     symptoms: [],
     affectCoord: null, // { valence: -1..1, arousal: -1..1 }
-    emotionWords: [],
+    candidateWords: [], // emotion words picked on the bubble screen (1-2)
+    emotionWord: null,  // the single final emotion word chosen
     sharingChoice: null, // 'yes' | 'no' | 'unsure'
     whyNotShare: null,   // reason id if sharingChoice === 'no'
     actionChoice: null,  // 'share' | 'photo' | 'text' | 'stay' | 'rescue'
@@ -38,11 +39,11 @@ export function AppProvider({ children }) {
     const next = [entry, ...history].slice(0, 30); // keep last 30
     setHistory(next);
     try { localStorage.setItem('sioh-sioh-history', JSON.stringify(next)); } catch {}
-    setSession({ symptoms: [], affectCoord: null, emotionWords: [], sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
+    setSession({ symptoms: [], affectCoord: null, candidateWords: [], emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
   }, [session, history]);
 
   const resetSession = useCallback(() => {
-    setSession({ symptoms: [], affectCoord: null, emotionWords: [], sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
+    setSession({ symptoms: [], affectCoord: null, candidateWords: [], emotionWord: null, sharingChoice: null, whyNotShare: null, actionChoice: null, journalNote: null, photoDataUrl: null, srwneResult: null, savoringDone: false });
   }, []);
 
   // Merge an imported backup (array of entries) into existing history, deduping by id.

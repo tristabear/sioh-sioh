@@ -72,7 +72,7 @@ function EntryCard({ entry, index }) {
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
           <div style={{ fontSize: 16, fontWeight: 700 }}>
-            {entry.emotionWords?.map(w => w.word).join('、') || '無命名'}
+            {entry.emotionWord?.word || '無命名'}
           </div>
           <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textAlign: 'right' }}>
             {date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}<br />
@@ -100,20 +100,12 @@ function MoodChart({ history }) {
   const W = 280, H = 80;
   const valenceToY = v => H - ((v + 1) / 2) * H;
 
-  // Each point reflects the average of the emotion words picked that session
-  // (falling back to the affect grid coordinate if no words were picked).
-  // Dot size grows slightly with how many words were picked.
-  const points = history.map(e => {
-    const words = e.emotionWords || [];
-    if (words.length > 0) {
-      const avg = arr => arr.reduce((s, v) => s + v, 0) / arr.length;
-      return {
-        coord: { valence: avg(words.map(w => w.valence)), arousal: avg(words.map(w => w.arousal)) },
-        radius: Math.min(4 + (words.length - 1), 6),
-      };
-    }
-    return { coord: e.affectCoord || { valence: 0, arousal: 0 }, radius: 4 };
-  });
+  // Each point reflects the chosen emotion word's coordinate
+  // (falling back to the affect grid coordinate if no word was picked).
+  const points = history.map(e => ({
+    coord: e.emotionWord || e.affectCoord || { valence: 0, arousal: 0 },
+    radius: 4,
+  }));
 
   const pts = points.map((p, i) => ({
     x: (i / Math.max(points.length - 1, 1)) * W,

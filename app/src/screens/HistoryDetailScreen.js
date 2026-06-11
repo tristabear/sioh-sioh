@@ -61,8 +61,15 @@ export default function HistoryDetailScreen() {
       </div>
 
       <h1 style={{ fontSize: 30, fontWeight: 900, color: 'var(--forest)', marginBottom: 12 }}>
-        {entry.emotionWords?.map(w => w.word).join('、') || '無命名'}
+        {entry.emotionWord?.word || '無命名'}
       </h1>
+
+      {entry.candidateWords?.length === 2 && entry.emotionWord && (
+        <p style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 12 }}>
+          你感受到了 {entry.candidateWords[0].word} 和 {entry.candidateWords[1].word}，<br />
+          你學會更精確地說出它：{entry.emotionWord.word}
+        </p>
+      )}
 
       {entry.affectCoord && (
         <span className="chip selected" style={{ background: quadrantColor, borderColor: quadrantColor, marginBottom: 20 }}>

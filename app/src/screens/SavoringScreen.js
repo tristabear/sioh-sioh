@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { SAVORING_STRATEGIES } from '../data/emotions';
+import { getQuadrantInfo } from '../utils/media';
 
 const SRWNE_FEEDBACK = {
   controlled: {
@@ -30,12 +31,16 @@ export default function SavoringScreen() {
   const { session, saveSession } = useApp();
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [done, setDone] = useState(false);
+  const [finalWord, setFinalWord] = useState(null);
+  const [candidateWords, setCandidateWords] = useState([]);
 
   const srwne = session.srwneResult;
   const feedback = srwne ? SRWNE_FEEDBACK[srwne] : null;
   const isPositive = !srwne || session.affectCoord?.valence > 0.1;
 
   const handleFinish = () => {
+    setFinalWord(session.emotionWord);
+    setCandidateWords(session.candidateWords || []);
     saveSession();
     setDone(true);
   };
@@ -46,6 +51,23 @@ export default function SavoringScreen() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px 28px', textAlign: 'center' }}>
           <div style={{ fontSize: 72, marginBottom: 20 }}>🌱</div>
           <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--forest)', marginBottom: 12 }}>練習完成了</h1>
+          {finalWord && candidateWords.length === 2 && (
+            <p style={{ fontSize: 16, color: 'var(--ink)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 2, marginBottom: 16 }}>
+              你感受到了<br />
+              <span style={{ fontWeight: 900, color: getQuadrantInfo(candidateWords[0]).color }}>{candidateWords[0].word}</span>
+              和
+              <span style={{ fontWeight: 900, color: getQuadrantInfo(candidateWords[1]).color }}>{candidateWords[1].word}</span>
+              ，<br />
+              你學會更精確地說出它：
+              <span style={{ fontWeight: 900, color: getQuadrantInfo(finalWord).color }}>{finalWord.word}</span>
+            </p>
+          )}
+          {finalWord && candidateWords.length !== 2 && (
+            <p style={{ fontSize: 16, color: 'var(--ink)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 2, marginBottom: 16 }}>
+              你今天感受到的是：
+              <span style={{ fontWeight: 900, color: getQuadrantInfo(finalWord).color }}>{finalWord.word}</span>
+            </p>
+          )}
           <p style={{ fontSize: 15, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.9, marginBottom: 32 }}>
             你今天惜惜了自己的心。<br />這一分鐘是值得的。
           </p>

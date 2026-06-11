@@ -60,8 +60,7 @@ export default function SRWNEScreen() {
 
   const isNegative = (session.affectCoord?.valence ?? 0) < -0.1;
   const isCalmPositive = (session.affectCoord?.valence ?? 0) > 0 && (session.affectCoord?.arousal ?? 0) < 0;
-  const emotionWords = session.emotionWords || [];
-  const emotionLabel = emotionWords.map(w => w.word).join('、');
+  const emotionLabel = session.emotionWord?.word || '';
 
   useEffect(() => {
     if (phase !== 'timer') return;
