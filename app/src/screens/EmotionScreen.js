@@ -33,6 +33,83 @@ function wordSize(word) {
   return 80;
 }
 
+const HALF = CANVAS_SIZE / 2;
+const QUADRANT_CELLS = {
+  HA_NEG: { xMin: 0, xMax: HALF, yMin: 0, yMax: HALF },
+  HA_POS: { xMin: HALF, xMax: CANVAS_SIZE, yMin: 0, yMax: HALF },
+  LA_NEG: { xMin: 0, xMax: HALF, yMin: HALF, yMax: CANVAS_SIZE },
+  LA_POS: { xMin: HALF, xMax: CANVAS_SIZE, yMin: HALF, yMax: CANVAS_SIZE },
+};
+const CELL_PADDING = 40;
+const RELAX_ITERATIONS = 400;
+
+// Lay every word out so each quadrant's cluster fills its quarter of the
+// canvas (closing the gap between quadrants), then relax overlapping
+// circles apart until they merely touch.
+function buildWordLayout() {
+  const groups = {};
+  EMOTION_WORDS.forEach(w => {
+    const id = (w.arousal >= 0 ? 'HA' : 'LA') + '_' + (w.valence >= 0 ? 'POS' : 'NEG');
+    (groups[id] || (groups[id] = [])).push(w);
+  });
+
+  const nodes = [];
+  Object.entries(groups).forEach(([qid, list]) => {
+    const cell = QUADRANT_CELLS[qid];
+    const vs = list.map(w => w.valence);
+    const as = list.map(w => w.arousal);
+    const vMin = Math.min(...vs), vMax = Math.max(...vs);
+    const aMin = Math.min(...as), aMax = Math.max(...as);
+    const innerW = cell.xMax - cell.xMin - CELL_PADDING * 2;
+    const innerH = cell.yMax - cell.yMin - CELL_PADDING * 2;
+
+    list.forEach(w => {
+      const tx = vMax > vMin ? (w.valence - vMin) / (vMax - vMin) : 0.5;
+      const ty = aMax > aMin ? (w.arousal - aMin) / (aMax - aMin) : 0.5;
+      const size = wordSize(w.word);
+      nodes.push({
+        word: w,
+        color: getQuadrantInfo(w).color,
+        size,
+        r: size / 2,
+        x: cell.xMin + CELL_PADDING + tx * innerW,
+        y: cell.yMin + CELL_PADDING + (1 - ty) * innerH,
+      });
+    });
+  });
+
+  for (let iter = 0; iter < RELAX_ITERATIONS; iter++) {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy);
+        const minDist = a.r + b.r;
+        if (dist < minDist) {
+          if (dist < 0.001) {
+            dx = Math.random() - 0.5;
+            dy = Math.random() - 0.5;
+            dist = Math.hypot(dx, dy);
+          }
+          const push = (minDist - dist) / 2;
+          const ux = dx / dist, uy = dy / dist;
+          a.x -= ux * push;
+          a.y -= uy * push;
+          b.x += ux * push;
+          b.y += uy * push;
+        }
+      }
+    }
+    nodes.forEach(n => {
+      n.x = Math.min(CANVAS_SIZE - n.r, Math.max(n.r, n.x));
+      n.y = Math.min(CANVAS_SIZE - n.r, Math.max(n.r, n.y));
+    });
+  }
+
+  return nodes;
+}
+
 // Fog thickens with distance from the viewport's center point — words
 // drifting further from view fade toward the mist.
 function fogOpacity(dist) {
@@ -61,13 +138,9 @@ export default function EmotionScreen() {
   const viewportRef = useRef(null);
   const dragRef = useRef(null);
 
-  // Place every word on the canvas once, by its own valence/arousal.
-  const words = useMemo(() => EMOTION_WORDS.map(w => ({
-    word: w,
-    color: getQuadrantInfo(w).color,
-    size: wordSize(w.word),
-    ...toCanvasPos(w),
-  })), []);
+  // Lay every word out once: packed by quadrant, relaxed so circles
+  // touch but never overlap.
+  const words = useMemo(() => buildWordLayout(), []);
 
   const centerPos = useMemo(() => toCanvasPos(coord), [coord.valence, coord.arousal]);
   const centerColor = getQuadrantInfo(coord).color;
