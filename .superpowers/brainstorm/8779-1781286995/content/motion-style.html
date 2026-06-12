@@ -1,0 +1,108 @@
+<h2>哪一種動畫感覺對？ / Which motion style feels right?</h2>
+<p class="subtitle">These use your real quadrant colors. Watch each for a few seconds — they animate continuously, like the How We Feel app.</p>
+
+<style>
+  .blob-demo { display: flex; gap: 14px; justify-content: center; padding: 18px 8px; flex-wrap: wrap; }
+  .blob {
+    width: 86px; height: 86px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 700;
+    text-align: center; line-height: 1.3;
+  }
+
+  /* ── Option A: full HWF personality — per-quadrant speed & character ── */
+  @keyframes morphFast {
+    0%   { border-radius: 58% 42% 51% 49% / 44% 59% 41% 56%; transform: rotate(0deg) scale(1); }
+    25%  { border-radius: 41% 59% 44% 56% / 57% 43% 57% 43%; transform: rotate(3deg) scale(1.05); }
+    50%  { border-radius: 55% 45% 58% 42% / 41% 55% 45% 59%; transform: rotate(-2deg) scale(0.97); }
+    75%  { border-radius: 44% 56% 42% 58% / 56% 44% 58% 42%; transform: rotate(2deg) scale(1.04); }
+    100% { border-radius: 58% 42% 51% 49% / 44% 59% 41% 56%; transform: rotate(0deg) scale(1); }
+  }
+  @keyframes morphBouncy {
+    0%   { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; transform: scale(1) translateY(0); }
+    30%  { border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%; transform: scale(1.08) translateY(-3px); }
+    60%  { border-radius: 55% 45% 60% 40% / 45% 55% 45% 55%; transform: scale(0.96) translateY(1px); }
+    100% { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; transform: scale(1) translateY(0); }
+  }
+  @keyframes morphDroopy {
+    0%   { border-radius: 50% 50% 46% 54% / 60% 60% 40% 40%; transform: scaleY(1); }
+    50%  { border-radius: 52% 48% 42% 58% / 66% 62% 38% 34%; transform: scaleY(0.94) translateY(3px); }
+    100% { border-radius: 50% 50% 46% 54% / 60% 60% 40% 40%; transform: scaleY(1); }
+  }
+  @keyframes morphCalm {
+    0%   { border-radius: 53% 47% 50% 50% / 49% 53% 47% 51%; transform: scale(1); }
+    50%  { border-radius: 48% 52% 53% 47% / 53% 47% 52% 48%; transform: scale(1.04); }
+    100% { border-radius: 53% 47% 50% 50% / 49% 53% 47% 51%; transform: scale(1); }
+  }
+  .a-haneg { background: #c97d50; animation: morphFast 1.6s ease-in-out infinite; }
+  .a-hapos { background: #7aae8e; animation: morphBouncy 2.2s ease-in-out infinite; }
+  .a-laneg { background: #8a7a6a; animation: morphDroopy 4.5s ease-in-out infinite; }
+  .a-lapos { background: #1c2b24; animation: morphCalm 5s ease-in-out infinite; }
+
+  /* ── Option B: uniform gentle morph, same rhythm everywhere ── */
+  @keyframes morphUniform {
+    0%   { border-radius: 55% 45% 52% 48% / 47% 55% 45% 53%; transform: scale(1) rotate(0deg); }
+    33%  { border-radius: 47% 53% 45% 55% / 55% 47% 53% 45%; transform: scale(1.03) rotate(1.5deg); }
+    66%  { border-radius: 52% 48% 55% 45% / 45% 52% 48% 55%; transform: scale(0.98) rotate(-1.5deg); }
+    100% { border-radius: 55% 45% 52% 48% / 47% 55% 45% 53%; transform: scale(1) rotate(0deg); }
+  }
+  .b-blob { animation: morphUniform 6s ease-in-out infinite; }
+  .b-blob:nth-child(2) { animation-delay: -1.5s; }
+  .b-blob:nth-child(3) { animation-delay: -3s; }
+  .b-blob:nth-child(4) { animation-delay: -4.5s; }
+
+  /* ── Option C: circles stay circles, breathing glow ── */
+  @keyframes breatheGlow {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    50%  { transform: scale(1.05); box-shadow: 0 0 24px 4px var(--glow, rgba(0,0,0,0.2)); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+  }
+  .c-blob { border-radius: 50%; animation: breatheGlow 4s ease-in-out infinite; }
+  .c-blob:nth-child(2) { animation-delay: -1s; }
+  .c-blob:nth-child(3) { animation-delay: -2s; }
+  .c-blob:nth-child(4) { animation-delay: -3s; }
+</style>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Full How-We-Feel personality</h3>
+      <p>Each quadrant moves differently: 高能量・不好 is fast and agitated, 高能量・好 bounces, 低能量・不好 droops slowly, 低能量・好 breathes calmly. Most expressive, most motion.</p>
+      <div class="blob-demo">
+        <div class="blob a-haneg">高能量<br>不好</div>
+        <div class="blob a-hapos">高能量<br>好</div>
+        <div class="blob a-laneg">低能量<br>不好</div>
+        <div class="blob a-lapos">低能量<br>好</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Uniform gentle morph</h3>
+      <p>All blobs share one slow, calm organic wobble (offset in time so they don't move in sync). Organic but quieter — closer to your app's current meditative tone.</p>
+      <div class="blob-demo">
+        <div class="blob b-blob" style="background:#c97d50">高能量<br>不好</div>
+        <div class="blob b-blob" style="background:#7aae8e">高能量<br>好</div>
+        <div class="blob b-blob" style="background:#8a7a6a">低能量<br>不好</div>
+        <div class="blob b-blob" style="background:#1c2b24">低能量<br>好</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Breathing circles (subtlest)</h3>
+      <p>Shapes stay circular but gently scale and glow, like slow breathing. Minimal change from today's design, least "How We Feel"-like.</p>
+      <div class="blob-demo">
+        <div class="blob c-blob" style="background:#c97d50; --glow:rgba(201,125,80,0.45)">高能量<br>不好</div>
+        <div class="blob c-blob" style="background:#7aae8e; --glow:rgba(122,174,142,0.45)">高能量<br>好</div>
+        <div class="blob c-blob" style="background:#8a7a6a; --glow:rgba(138,122,106,0.45)">低能量<br>不好</div>
+        <div class="blob c-blob" style="background:#1c2b24; --glow:rgba(28,43,36,0.45)">低能量<br>好</div>
+      </div>
+    </div>
+  </div>
+</div>

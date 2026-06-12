@@ -1,0 +1,91 @@
+<h2>霧中情緒字 — 呼吸效果預覽 / Fog canvas breathing preview</h2>
+<p class="subtitle">Each word breathes at its own randomized pace (3.5–5.5s). 「焦慮」 is shown selected — it's the only one with a glow halo. Fog opacity (words fading at the edges) works as it does today.</p>
+
+<style>
+  .fog-viewport {
+    position: relative;
+    width: 100%; max-width: 420px; height: 420px;
+    margin: 16px auto;
+    background: #F5F3F0;
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+  }
+  @keyframes wordBreathe {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.045); }
+    100% { transform: scale(1); }
+  }
+  @keyframes selBreathe {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+    50%  { transform: scale(1.06); box-shadow: 0 0 26px 6px var(--glow); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+  }
+  .fog-word {
+    position: absolute;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    text-align: center; line-height: 1.2;
+    animation: wordBreathe var(--dur, 4.5s) ease-in-out var(--del, 0s) infinite;
+  }
+  .fog-word.sel {
+    animation: selBreathe var(--dur, 4.5s) ease-in-out var(--del, 0s) infinite;
+    font-weight: 700;
+  }
+  .edge-label {
+    position: absolute; font-size: 10px; color: rgba(44,53,57,0.28);
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+</style>
+
+<div class="fog-viewport">
+  <!-- selected word: full opacity + glow -->
+  <div class="fog-word sel" style="left:150px; top:150px; width:84px; height:84px; font-size:18px; color:#c97d50; --glow:rgba(201,125,80,0.4); --dur:4.2s;
+    background: radial-gradient(circle, rgba(201,125,80,0.40) 0%, rgba(201,125,80,0.08) 55%, transparent 100%);">焦慮</div>
+
+  <!-- near words: high opacity -->
+  <div class="fog-word" style="left:60px; top:80px; width:72px; height:72px; font-size:15px; color:#c97d50; --dur:5.1s; --del:-2s; opacity:0.85;
+    background: radial-gradient(circle, rgba(201,125,80,0.25) 0%, rgba(201,125,80,0.08) 55%, transparent 100%);">生氣</div>
+  <div class="fog-word" style="left:250px; top:90px; width:78px; height:78px; font-size:15px; color:#c97d50; --dur:3.8s; --del:-1.2s; opacity:0.8;
+    background: radial-gradient(circle, rgba(201,125,80,0.25) 0%, rgba(201,125,80,0.08) 55%, transparent 100%);">煩躁</div>
+  <div class="fog-word" style="left:100px; top:240px; width:80px; height:80px; font-size:15px; color:#8a7a6a; --dur:4.8s; --del:-3.1s; opacity:0.75;
+    background: radial-gradient(circle, rgba(138,122,106,0.25) 0%, rgba(138,122,106,0.08) 55%, transparent 100%);">疲憊</div>
+  <div class="fog-word" style="left:240px; top:230px; width:72px; height:72px; font-size:15px; color:#8a7a6a; --dur:5.4s; --del:-0.7s; opacity:0.7;
+    background: radial-gradient(circle, rgba(138,122,106,0.25) 0%, rgba(138,122,106,0.08) 55%, transparent 100%);">低落</div>
+
+  <!-- mid-distance words: fading into fog -->
+  <div class="fog-word" style="left:20px; top:180px; width:66px; height:66px; font-size:14px; color:#c97d50; --dur:4.4s; --del:-1.8s; opacity:0.45;
+    background: radial-gradient(circle, rgba(201,125,80,0.25) 0%, rgba(201,125,80,0.08) 55%, transparent 100%);">緊張</div>
+  <div class="fog-word" style="left:320px; top:170px; width:70px; height:70px; font-size:14px; color:#7aae8e; --dur:5.0s; --del:-2.6s; opacity:0.4;
+    background: radial-gradient(circle, rgba(122,174,142,0.25) 0%, rgba(122,174,142,0.08) 55%, transparent 100%);">期待</div>
+  <div class="fog-word" style="left:170px; top:30px; width:64px; height:64px; font-size:14px; color:#c97d50; --dur:3.6s; --del:-0.4s; opacity:0.42;
+    background: radial-gradient(circle, rgba(201,125,80,0.25) 0%, rgba(201,125,80,0.08) 55%, transparent 100%);">不安</div>
+
+  <!-- far words: deep in fog -->
+  <div class="fog-word" style="left:40px; top:330px; width:70px; height:70px; font-size:14px; color:#1c2b24; --dur:5.3s; --del:-3.8s; opacity:0.14;
+    background: radial-gradient(circle, rgba(28,43,36,0.25) 0%, rgba(28,43,36,0.08) 55%, transparent 100%);">平靜</div>
+  <div class="fog-word" style="left:200px; top:330px; width:64px; height:64px; font-size:14px; color:#1c2b24; --dur:4.0s; --del:-1.5s; opacity:0.12;
+    background: radial-gradient(circle, rgba(28,43,36,0.25) 0%, rgba(28,43,36,0.08) 55%, transparent 100%);">安心</div>
+  <div class="fog-word" style="left:310px; top:300px; width:70px; height:70px; font-size:14px; color:#7aae8e; --dur:4.7s; --del:-2.2s; opacity:0.1;
+    background: radial-gradient(circle, rgba(122,174,142,0.25) 0%, rgba(122,174,142,0.08) 55%, transparent 100%);">開心</div>
+
+  <div class="edge-label" style="top:8px; left:0; right:0; text-align:center;">能量高</div>
+  <div class="edge-label" style="bottom:8px; left:0; right:0; text-align:center;">能量低</div>
+  <div class="edge-label" style="left:6px; top:50%; transform:translateY(-50%); writing-mode:vertical-rl;">感覺不好</div>
+  <div class="edge-label" style="right:6px; top:50%; transform:translateY(-50%); writing-mode:vertical-rl;">感覺好</div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="looks-good" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content"><h3>看起來不錯 — approve</h3><p>The breathing fog canvas looks right as shown.</p></div>
+  </div>
+  <div class="option" data-choice="stronger" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content"><h3>呼吸再明顯一點</h3><p>Make the breathing more noticeable (bigger scale change).</p></div>
+  </div>
+  <div class="option" data-choice="subtler" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content"><h3>呼吸再輕一點</h3><p>Make the breathing subtler (smaller scale change).</p></div>
+  </div>
+</div>

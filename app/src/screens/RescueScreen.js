@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 
 // Inhale : second-inhale : exhale ratio is kept close to 2:1:5 across paces.
 const PACES = [
-  { id: 'slow', label: '🌊 緩慢', sub: '吸氣 3秒 / 再吸 1.5秒 / 吐氣 8秒', durations: [3000, 1500, 8000] },
+  { id: 'slow', label: '🌊 緩慢', sub: '吸氣 4秒 / 再吸 2秒 / 吐氣 10秒', durations: [4000, 2000, 10000, 2500] },
   { id: 'standard', label: '🌫️ 標準', sub: '吸氣 2秒 / 再吸 1秒 / 吐氣 5秒', durations: [2000, 1000, 5000] },
   { id: 'gentle', label: '🌸 輕柔', sub: '吸氣 1.5秒 / 再吸 0.8秒 / 吐氣 4秒', durations: [1500, 800, 4000] },
 ];
@@ -26,12 +26,12 @@ export default function RescueScreen() {
   const fromCheck = session.affectCoord !== null;
 
   const PHASES = useMemo(() => {
-    const [inhale, inhale2, exhale] = (PACES.find(p => p.id === pace) || PACES[1]).durations;
+    const [inhale, inhale2, exhale, pause] = (PACES.find(p => p.id === pace) || PACES[1]).durations;
     return [
       { label: '用鼻子吸氣', sublabel: '第一次吸氣', name: '吸氣', duration: inhale, scale: 1.3, color: '#5a8fa3' },
       { label: '再吸一口氣', sublabel: '把肺吸滿', name: '再吸一口', duration: inhale2, scale: 1.5, color: '#5a8fa3' },
       { label: '慢慢從嘴巴吐氣', sublabel: '盡量吐長一點', name: '慢慢吐氣', duration: exhale, scale: 0.85, color: '#2d5566' },
-      { label: '自然停頓', sublabel: '', name: '', duration: 1500, scale: 0.85, color: '#2d5566' },
+      { label: '自然停頓', sublabel: '', name: '', duration: pause ?? 1500, scale: 0.85, color: '#2d5566' },
     ];
   }, [pace]);
 

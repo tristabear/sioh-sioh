@@ -1,0 +1,68 @@
+<h2>象限選擇畫面 — 保留方塊還是改成圓形？</h2>
+<p class="subtitle">The fog-canvas words will breathe as circles either way. This question is only about the 4-quadrant picker screen (你的感受比較接近哪一種？).</p>
+
+<style>
+  .mock-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    width: 260px; margin: 16px auto; aspect-ratio: 1/1;
+  }
+  @keyframes breatheCard {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    50%  { transform: scale(1.025); box-shadow: 0 0 18px 2px var(--glow); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+  }
+  @keyframes breatheCircle {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    50%  { transform: scale(1.05); box-shadow: 0 0 22px 4px var(--glow); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+  }
+  .q-card {
+    border-radius: 18px; border: 1.5px solid rgba(58,107,126,0.2);
+    background: #fff; color: #2C3539;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; text-align: center; line-height: 1.5;
+    animation: breatheCard 4s ease-in-out infinite;
+  }
+  .q-circle {
+    border-radius: 50%; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; text-align: center; line-height: 1.5;
+    animation: breatheCircle 4s ease-in-out infinite;
+  }
+  .d2 { animation-delay: -1s; } .d3 { animation-delay: -2s; } .d4 { animation-delay: -3s; }
+  .axis { text-align: center; font-size: 11px; color: #999; margin: 2px 0; }
+</style>
+
+<div class="options">
+  <div class="option" data-choice="cards" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Keep the rectangles, add breathing</h3>
+      <p>The four buttons stay as cards (current layout untouched) and gain the gentle breathing scale + colored glow. Selected card glows in its quadrant color. Lowest-risk change.</p>
+      <div class="axis">能量高</div>
+      <div class="mock-grid">
+        <div class="q-card" style="--glow:rgba(201,125,80,0.35)">高能量<br>感覺不好</div>
+        <div class="q-card d2" style="--glow:rgba(122,174,142,0.35)">高能量<br>感覺好</div>
+        <div class="q-card d3" style="--glow:rgba(138,122,106,0.35)">低能量<br>感覺不好</div>
+        <div class="q-card d4" style="--glow:rgba(28,43,36,0.35)">低能量<br>感覺好</div>
+      </div>
+      <div class="axis">能量低</div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="circles" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Convert to breathing circles</h3>
+      <p>The four quadrants become filled colored circles that breathe — visually matching the fog-canvas words on the next screen, more How-We-Feel-like. Bigger visual change.</p>
+      <div class="axis">能量高</div>
+      <div class="mock-grid">
+        <div class="q-circle" style="background:#c97d50; --glow:rgba(201,125,80,0.45)">高能量<br>感覺不好</div>
+        <div class="q-circle d2" style="background:#7aae8e; --glow:rgba(122,174,142,0.45)">高能量<br>感覺好</div>
+        <div class="q-circle d3" style="background:#8a7a6a; --glow:rgba(138,122,106,0.45)">低能量<br>感覺不好</div>
+        <div class="q-circle d4" style="background:#1c2b24; --glow:rgba(28,43,36,0.45)">低能量<br>感覺好</div>
+      </div>
+      <div class="axis">能量低</div>
+    </div>
+  </div>
+</div>
