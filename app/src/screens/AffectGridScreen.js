@@ -45,6 +45,7 @@ export default function AffectGridScreen() {
                 <button
                   key={q.id}
                   onClick={() => setSelected(q)}
+                  aria-pressed={isSel}
                   className="quad-breathe"
                   style={{
                     '--del': `${-i}s`,
