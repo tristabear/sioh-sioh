@@ -198,8 +198,9 @@ button {
 
 .fog-breathe {
   animation: wordBreathe var(--dur, 4.5s) ease-in-out var(--del, 0s) infinite;
+  isolation: isolate;
 }
-/* Pulsing halo behind every fog word — animates opacity only (GPU-cheap with ~50 words) */
+/* Pulsing halo behind every fog word — animates opacity only (GPU-cheap with ~100 words) */
 .fog-breathe::before {
   content: '';
   position: absolute;
@@ -229,6 +230,7 @@ button {
   .fog-breathe,
   .fog-breathe::before,
   .fog-breathe.sel { animation: none; }
+  .fog-breathe.sel { box-shadow: 0 0 12px 2px var(--glow, transparent); }
 }
 
 /* ── Tag / chip ── */
