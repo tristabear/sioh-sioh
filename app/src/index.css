@@ -206,6 +206,7 @@ button {
   inset: -14%;
   border-radius: 50%;
   background: radial-gradient(circle, var(--halo, transparent) 0%, transparent 70%);
+  opacity: 0.25;
   animation: haloPulse var(--dur, 4.5s) ease-in-out var(--del, 0s) infinite;
   z-index: -1;
   pointer-events: none;
