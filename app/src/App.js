@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
+import { Analytics } from '@vercel/analytics/react';
 import './index.css';
 
 import BottomNav from './components/BottomNav';
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/history/:id" element={<><HistoryDetailScreen /><BottomNav /></>} />
           </Routes>
         </div>
+        <Analytics />
       </BrowserRouter>
     </AppProvider>
   );
