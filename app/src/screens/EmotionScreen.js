@@ -40,7 +40,10 @@ const QUADRANT_CELLS = {
   LA_NEG: { xMin: 0, xMax: HALF, yMin: HALF, yMax: CANVAS_SIZE },
   LA_POS: { xMin: HALF, xMax: CANVAS_SIZE, yMin: HALF, yMax: CANVAS_SIZE },
 };
-const CELL_PADDING = 40;
+// Small padding lets neighbouring quadrant clusters blend at the seams
+// instead of leaving a dead cross through the canvas middle; the
+// relaxation pass below still keeps individual circles from overlapping.
+const CELL_PADDING = 10;
 const RELAX_ITERATIONS = 400;
 
 // Lay every word out so each quadrant's cluster fills its quarter of the
@@ -145,7 +148,6 @@ export default function EmotionScreen() {
   const words = useMemo(() => buildWordLayout(), []);
 
   const centerPos = useMemo(() => toCanvasPos(coord), [coord.valence, coord.arousal]);
-  const centerColor = getQuadrantInfo(coord).color;
 
   // Center the canvas on the user's affect coordinate.
   useEffect(() => {
@@ -253,39 +255,6 @@ export default function EmotionScreen() {
             transform: `translate(${offset.x}px, ${offset.y}px)`,
           }}
         >
-          {/* User's affect-coordinate marker, with a faint halo —
-              only shown until a word is picked, once it's served its purpose */}
-          {selected.length === 0 && (
-            <>
-              <div
-                style={{
-                  position: 'absolute',
-                  left: centerPos.x,
-                  top: centerPos.y,
-                  width: 140,
-                  height: 140,
-                  borderRadius: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  background: `radial-gradient(circle, ${withAlpha(centerColor, 0.16)} 0%, transparent 70%)`,
-                  pointerEvents: 'none',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  left: centerPos.x,
-                  top: centerPos.y,
-                  width: 10,
-                  height: 10,
-                  borderRadius: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  background: centerColor,
-                  pointerEvents: 'none',
-                }}
-              />
-            </>
-          )}
-
           {words.map(({ word: w, color, size, x, y, breatheDur, breatheDel }) => {
             const isSel = selected.some(s => s.id === w.id);
             const disabled = selected.length >= 2 && !isSel;
