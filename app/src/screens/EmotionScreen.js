@@ -74,6 +74,8 @@ function buildWordLayout() {
         r: size / 2,
         x: cell.xMin + CELL_PADDING + tx * innerW,
         y: cell.yMin + CELL_PADDING + (1 - ty) * innerH,
+        breatheDur: 3.5 + Math.random() * 2,   // 3.5–5.5s
+        breatheDel: -Math.random() * 5,        // negative: start mid-cycle
       });
     });
   });
@@ -284,7 +286,7 @@ export default function EmotionScreen() {
             </>
           )}
 
-          {words.map(({ word: w, color, size, x, y }) => {
+          {words.map(({ word: w, color, size, x, y, breatheDur, breatheDel }) => {
             const isSel = selected.some(s => s.id === w.id);
             const disabled = selected.length >= 2 && !isSel;
             const dist = Math.hypot(x - focus.x, y - focus.y);
@@ -295,7 +297,12 @@ export default function EmotionScreen() {
               <div
                 key={w.id}
                 onClick={() => !disabled && toggleWord(w)}
+                className={`fog-breathe${isSel ? ' sel' : ''}`}
                 style={{
+                  '--dur': `${breatheDur}s`,
+                  '--del': `${breatheDel}s`,
+                  '--halo': withAlpha(color, 0.35),
+                  '--glow': withAlpha(color, 0.4),
                   position: 'absolute',
                   left: x - size / 2,
                   top: y - size / 2,
