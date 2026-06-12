@@ -37,26 +37,33 @@ export default function AffectGridScreen() {
           {/* Axis labels */}
           <div style={{ textAlign: 'center', fontSize: 12, color: 'rgba(90,82,72,0.5)', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>能量高</div>
           <div style={{ position: 'relative', margin: '0 26px', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 12, aspectRatio: '1 / 1' }}>
-            {QUADRANTS.map(q => {
+            {QUADRANTS.map((q, i) => {
               const isSel = selected?.id === q.id;
+              const dimmed = selected && !isSel;
+              const [line1, line2] = q.label.split('・');
               return (
                 <button
                   key={q.id}
                   onClick={() => setSelected(q)}
+                  className="quad-breathe"
                   style={{
-                    borderRadius: 'var(--radius-md)',
-                    border: `1.5px solid ${isSel ? q.color : 'var(--border)'}`,
-                    background: isSel ? q.color : '#fff',
-                    color: isSel ? '#fff' : 'var(--ink)',
-                    fontSize: 16,
+                    '--del': `${-i}s`,
+                    '--glow': `${q.color}${isSel ? '88' : '59'}`,
+                    aspectRatio: '1 / 1',
+                    borderRadius: '50%',
+                    border: isSel ? '3px solid #fff' : '3px solid transparent',
+                    background: q.color,
+                    color: '#fff',
+                    fontSize: 15,
                     fontWeight: 700,
                     fontFamily: 'var(--font-sans)',
+                    lineHeight: 1.5,
                     cursor: 'pointer',
-                    transition: 'all 0.18s',
-                    boxShadow: isSel ? `0 4px 14px ${q.color}44` : 'none',
+                    opacity: dimmed ? 0.5 : 1,
+                    transition: 'opacity 0.25s, border-color 0.25s',
                   }}
                 >
-                  {q.label}
+                  {line1}<br />{line2}
                 </button>
               );
             })}
