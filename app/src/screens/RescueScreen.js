@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import ShihuBreathing from '../components/ShihuBreathing';
 
 // Inhale : second-inhale : exhale ratio is kept close to 2:1:5 across paces.
 const PACES = [
@@ -171,19 +172,18 @@ export default function RescueScreen() {
       </div>
 
       <div style={{
-        width: 180, height: 180, borderRadius: '50%',
-        background: `radial-gradient(circle, ${phase.color}88 0%, ${phase.color}22 70%)`,
-        border: `2px solid ${phase.color}55`,
+        position: 'relative',
+        width: 230, height: 230,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         marginBottom: 20,
-        transform: `scale(${phase.scale})`,
-        transition: `transform ${phase.duration}ms ease-in-out`,
-        boxShadow: `0 0 60px ${phase.color}33`,
       }}>
         <div style={{
-          width: 80, height: 80, borderRadius: '50%',
-          background: `radial-gradient(circle, ${phase.color} 0%, ${phase.color}88 100%)`,
+          position: 'absolute', inset: 0, borderRadius: '50%',
+          background: `radial-gradient(circle, ${phase.color}55 0%, ${phase.color}00 70%)`,
+          transform: `scale(${phase.scale})`,
+          transition: `transform ${phase.duration}ms ease-in-out, background ${phase.duration}ms ease-in-out`,
         }} />
+        <ShihuBreathing phaseIndex={phaseIdx} durationMs={phase.duration} style={{ position: 'relative', width: '92%', height: '92%' }} />
       </div>
 
       <div style={{ textAlign: 'center', marginBottom: 24 }}>

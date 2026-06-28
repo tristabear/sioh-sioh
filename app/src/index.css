@@ -216,6 +216,46 @@ button {
   animation: selectedBreathe var(--dur, 4.5s) ease-in-out var(--del, 0s) infinite;
 }
 
+/* Shihu breathing creature (RescueScreen) — idle flourishes only; the
+   inhale/exhale body motion itself is driven inline from phase state. */
+@keyframes shihuTailSway {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(6deg); }
+  45% { transform: rotate(-4deg); }
+  65% { transform: rotate(12deg); }
+  82% { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes shihuEarLeft {
+  0%, 76% { transform: rotate(0deg); }
+  84% { transform: rotate(-4deg); }
+  90% { transform: rotate(2deg); }
+  96% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes shihuEarRight {
+  0%, 80% { transform: rotate(0deg); }
+  88% { transform: rotate(3deg); }
+  95% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes shihuBlink {
+  0%, 91% { transform: scaleY(1); }
+  93.5% { transform: scaleY(.07); }
+  96%, 100% { transform: scaleY(1); }
+}
+@keyframes shihuFloatMote {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  12% { opacity: .5; }
+  80% { opacity: .38; }
+  100% { transform: translateY(-380px) translateX(18px); opacity: 0; }
+}
+.shihu-tail { transform-box: fill-box; transform-origin: 0% 100%; animation: shihuTailSway 6.5s ease-in-out infinite; }
+.shihu-ear-l { transform-box: fill-box; transform-origin: 50% 100%; animation: shihuEarLeft 6s ease-in-out infinite; }
+.shihu-ear-r { transform-box: fill-box; transform-origin: 50% 100%; animation: shihuEarRight 8s ease-in-out infinite; }
+.shihu-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: shihuBlink 5.2s ease-in-out infinite; }
+.shihu-mote { transform-box: fill-box; transform-origin: 50% 50%; animation-name: shihuFloatMote; animation-timing-function: linear; animation-iteration-count: infinite; }
+
 .fade-up { animation: fadeUp 0.4s ease both; }
 
 /* Stagger helpers */
@@ -231,6 +271,11 @@ button {
   .fog-breathe::before,
   .fog-breathe.sel { animation: none; }
   .fog-breathe.sel { box-shadow: 0 0 12px 2px var(--glow, transparent); }
+  .shihu-tail,
+  .shihu-ear-l,
+  .shihu-ear-r,
+  .shihu-eyes,
+  .shihu-mote { animation: none; }
 }
 
 /* ── Tag / chip ── */
