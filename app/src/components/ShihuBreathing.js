@@ -38,6 +38,9 @@ const CREATURE_STEPS = [
 export default function ShihuBreathing({ phaseIndex, durationMs, style }) {
   const step = CREATURE_STEPS[phaseIndex] || CREATURE_STEPS[0];
   const ease = `${durationMs}ms ease-in-out`;
+  // Pause (index 3) is the one moment the creature should hold fully still —
+  // freeze the idle flourishes too, not just the body/belly/shadow pose.
+  const idleStyle = { animationPlayState: phaseIndex === 3 ? 'paused' : 'running' };
 
   const bodyStyle = {
     transformBox: 'fill-box',
@@ -79,7 +82,7 @@ export default function ShihuBreathing({ phaseIndex, durationMs, style }) {
 
       <ellipse cx="235" cy="432" rx="134" ry="24" fill="#6b4a2f" style={shadowStyle} />
 
-      <g className="shihu-tail">
+      <g className="shihu-tail" style={idleStyle}>
         <path d="M335 398 Q 426 374 414 290 Q 408 246 374 240" fill="none" stroke="#d7a263" strokeWidth="36" strokeLinecap="round" />
         <path d="M335 398 Q 426 374 414 290 Q 408 246 374 240" fill="none" stroke="#5c4329" strokeWidth="36" strokeLinecap="butt" strokeDasharray="15 46" opacity=".8" />
         <circle cx="374" cy="240" r="13" fill="#4f3a23" />
@@ -100,12 +103,12 @@ export default function ShihuBreathing({ phaseIndex, durationMs, style }) {
         </g>
 
         <g>
-          <g className="shihu-ear-l">
+          <g className="shihu-ear-l" style={idleStyle}>
             <path d="M150 110 Q 150 50 169 32 Q 184 45 214 98 Q 186 118 150 110 Z" fill="#d7a263" />
             <path d="M167 102 Q 170 62 180 50 Q 190 62 201 100 Q 184 110 167 102 Z" fill="#e9b9a8" />
             <path d="M150 110 Q 150 50 169 32 Q 176 42 182 56 Q 165 78 150 110 Z" fill="#4f3a23" opacity=".55" />
           </g>
-          <g className="shihu-ear-r">
+          <g className="shihu-ear-r" style={idleStyle}>
             <path d="M320 110 Q 320 50 301 32 Q 286 45 256 98 Q 284 118 320 110 Z" fill="#d7a263" />
             <path d="M303 102 Q 300 62 290 50 Q 280 62 269 100 Q 286 110 303 102 Z" fill="#e9b9a8" />
             <path d="M320 110 Q 320 50 301 32 Q 294 42 288 56 Q 305 78 320 110 Z" fill="#4f3a23" opacity=".55" />
@@ -132,7 +135,7 @@ export default function ShihuBreathing({ phaseIndex, durationMs, style }) {
             <path d="M292 224 Q 330 230 358 234" />
           </g>
 
-          <g className="shihu-eyes">
+          <g className="shihu-eyes" style={idleStyle}>
             <ellipse cx="193" cy="178" rx="23" ry="27" fill="#4a3526" />
             <ellipse cx="277" cy="178" rx="23" ry="27" fill="#4a3526" />
             <circle cx="186" cy="169" r="7.5" fill="#fffaf2" />

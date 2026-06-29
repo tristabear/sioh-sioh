@@ -52,6 +52,11 @@ export default function RescueScreen() {
   }, [started, phaseIdx, round, done, PHASES]);
 
   const phase = PHASES[phaseIdx];
+  // Inhale phases (0,1) glow blue; exhale/pause (2,3) glow teal. Cross-fading
+  // two solid-gradient layers (instead of transitioning one gradient's color
+  // stops) keeps the swap smooth — browsers can't interpolate between two
+  // different gradient strings, so that approach pops instead of fading.
+  const isInhalePhase = phaseIdx < 2;
 
   // Per-second countdown for the current phase, reset whenever the phase changes.
   useEffect(() => {
@@ -179,9 +184,17 @@ export default function RescueScreen() {
       }}>
         <div style={{
           position: 'absolute', inset: 0, borderRadius: '50%',
-          background: `radial-gradient(circle, ${phase.color}55 0%, ${phase.color}00 70%)`,
+          background: 'radial-gradient(circle, #5a8fa355 0%, #5a8fa300 70%)',
           transform: `scale(${phase.scale})`,
-          transition: `transform ${phase.duration}ms ease-in-out, background ${phase.duration}ms ease-in-out`,
+          opacity: isInhalePhase ? 1 : 0,
+          transition: `transform ${phase.duration}ms ease-in-out, opacity ${phase.duration}ms ease-in-out`,
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: '50%',
+          background: 'radial-gradient(circle, #2d556655 0%, #2d556600 70%)',
+          transform: `scale(${phase.scale})`,
+          opacity: isInhalePhase ? 0 : 1,
+          transition: `transform ${phase.duration}ms ease-in-out, opacity ${phase.duration}ms ease-in-out`,
         }} />
         <ShihuBreathing phaseIndex={phaseIdx} durationMs={phase.duration} style={{ position: 'relative', width: '92%', height: '92%' }} />
       </div>
@@ -190,22 +203,18 @@ export default function RescueScreen() {
         <div style={{ fontSize: 36, fontWeight: 900, color: phase.color, lineHeight: 1 }}>
           {countdown}
         </div>
-        {phase.name && (
-          <div style={{ fontSize: 13, color: 'rgba(250,247,242,0.55)', fontFamily: 'var(--font-sans)', fontWeight: 300, marginTop: 4 }}>
-            {phase.name}
-          </div>
-        )}
+        <div style={{ fontSize: 13, color: 'rgba(250,247,242,0.55)', fontFamily: 'var(--font-sans)', fontWeight: 300, marginTop: 4, minHeight: 19 }}>
+          {phase.name}
+        </div>
       </div>
 
       <div style={{ textAlign: 'center', color: '#faf7f2' }}>
         <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>
           {phase.label}
         </div>
-        {phase.sublabel && (
-          <div style={{ fontSize: 14, color: 'rgba(250,247,242,0.55)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
-            {phase.sublabel}
-          </div>
-        )}
+        <div style={{ fontSize: 14, color: 'rgba(250,247,242,0.55)', fontFamily: 'var(--font-sans)', fontWeight: 300, minHeight: 20 }}>
+          {phase.sublabel}
+        </div>
       </div>
 
       <button
