@@ -145,7 +145,7 @@ export default function HistoryDetailScreen() {
             </button>
           </div>
         ) : (
-          <button className="btn-secondary" onClick={() => setShareCardUrl(generateShareCard(entry))}>
+          <button className="btn-secondary" onClick={async () => setShareCardUrl(await generateShareCard(entry))}>
             🖼️ 製作分享圖卡
           </button>
         )}

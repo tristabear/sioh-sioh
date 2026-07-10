@@ -9,6 +9,30 @@ export default function HomeScreen() {
   const today = new Date().toLocaleDateString('zh-TW', { month: 'long', day: 'numeric', weekday: 'long' });
   const hour = new Date().getHours();
   const greeting = hour < 12 ? '早安' : hour < 18 ? '午安' : '晚安';
+  // From 20:00 the sleep card becomes the primary action, above the daily practice.
+  const isNight = hour >= 20 || hour < 5;
+
+  const sleepCard = (
+    <div
+      className={`card fade-up ${isNight ? '' : 'stagger-2'}`}
+      onClick={() => navigate('/sleep')}
+      style={{
+        cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16,
+        background: 'linear-gradient(135deg, #101d26 0%, #1c3a44 100%)',
+        border: 'none',
+      }}
+    >
+      <div style={{ fontSize: 36 }}>🌙</div>
+      <div>
+        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, color: '#faf7f2' }}>
+          {isNight ? '該休息了' : '睡眠'}
+        </div>
+        <div style={{ fontSize: 12, color: 'rgba(250,247,242,0.6)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
+          {isNight ? '讓聲音陪你，慢慢沉進今晚的睡眠' : '放鬆、呼吸與睡前故事，陪你入睡'}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="screen" style={{ padding: '0 0 100px 0' }}>
@@ -53,8 +77,10 @@ export default function HomeScreen() {
       </div>
 
       <div style={{ padding: '28px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {isNight && sleepCard}
+
         {/* Main CTA */}
-        <div className="card fade-up" style={{ borderTop: '4px solid var(--clay)' }}>
+        <div className={`card fade-up ${isNight ? 'stagger-1' : ''}`} style={{ borderTop: '4px solid var(--clay)' }}>
           <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>開始今天的練習</div>
           <div style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7, marginBottom: 20 }}>
             從身體感受出發，陪你認識現在的情緒狀態。約 3–5 分鐘。
@@ -78,6 +104,8 @@ export default function HomeScreen() {
             </div>
           </div>
         </div>
+
+        {!isNight && sleepCard}
 
         {/* Recent mood */}
         {history.length > 0 && (
@@ -108,6 +136,15 @@ export default function HomeScreen() {
             <MoodHistory history={history.slice(0, 7)} />
           </div>
         )}
+
+        {/* Support resources */}
+        <button
+          className="fade-up stagger-4"
+          onClick={() => navigate('/support')}
+          style={{ fontSize: 13, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, padding: '8px 0', textAlign: 'center' }}
+        >
+          需要更多支持？<span style={{ textDecoration: 'underline' }}>安心資源</span> 🤍
+        </button>
       </div>
     </div>
   );

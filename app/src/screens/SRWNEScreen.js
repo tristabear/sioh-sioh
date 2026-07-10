@@ -333,7 +333,7 @@ export default function SRWNEScreen() {
           <button
             className="btn-secondary"
             style={{ marginBottom: 24 }}
-            onClick={() => setShareCardUrl(generateShareCard(session))}
+            onClick={async () => setShareCardUrl(await generateShareCard(session))}
           >
             🖼️ 製作分享圖卡
           </button>

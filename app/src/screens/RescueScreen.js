@@ -123,6 +123,12 @@ export default function RescueScreen() {
           <button className="btn-secondary" style={{ marginTop: 12, maxWidth: 280 }} onClick={() => navigate(fromCheck ? '/check/emotion' : -1)}>
             先不用了
           </button>
+          <button
+            onClick={() => navigate('/support')}
+            style={{ marginTop: 20, fontSize: 13, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, textDecoration: 'underline' }}
+          >
+            需要真人陪伴？安心資源
+          </button>
         </div>
       </div>
     );

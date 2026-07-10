@@ -27,6 +27,14 @@ const TABS = [
     ),
   },
   {
+    path: '/sleep', label: '睡眠',
+    icon: (active) => (
+      <svg viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" />
+      </svg>
+    ),
+  },
+  {
     path: '/history', label: '記錄',
     icon: (active) => (
       <svg viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8">
