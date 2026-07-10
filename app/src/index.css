@@ -1,3 +1,8 @@
+/* Font-face rules for the self-hosted TC fonts live in public/index.html's
+   inline <style> block, not here — webpack's css-loader tries to resolve
+   root-absolute url() paths in bundled CSS as module imports, which breaks
+   for files that live in public/ rather than src/. */
+
 :root {
   --ink: #2C3539;
   --forest: #3A6B7E;

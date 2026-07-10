@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { getQuadrantInfo } from '../utils/media';
+import ShihuAvatar from '../components/ShihuAvatar';
 
 export default function HomeScreen() {
   const navigate = useNavigate();
@@ -16,18 +17,14 @@ export default function HomeScreen() {
     <div
       className={`card fade-up ${isNight ? '' : 'stagger-2'}`}
       onClick={() => navigate('/sleep')}
-      style={{
-        cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16,
-        background: 'linear-gradient(135deg, #101d26 0%, #1c3a44 100%)',
-        border: 'none',
-      }}
+      style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16, borderLeft: '4px solid #1c2b24' }}
     >
       <div style={{ fontSize: 36 }}>🌙</div>
       <div>
-        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, color: '#faf7f2' }}>
+        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>
           {isNight ? '該休息了' : '睡眠'}
         </div>
-        <div style={{ fontSize: 12, color: 'rgba(250,247,242,0.6)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
+        <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
           {isNight ? '讓聲音陪你，慢慢沉進今晚的睡眠' : '放鬆、呼吸與睡前故事，陪你入睡'}
         </div>
       </div>
@@ -57,13 +54,7 @@ export default function HomeScreen() {
         }} />
         {/* Inner content constrained to 480px */}
         <div style={{ maxWidth: 480, margin: '0 auto', padding: '56px 28px 36px', position: 'relative', zIndex: 1 }}>
-          <div style={{
-            width: 56, height: 56,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, #C8A579 0%, #BE8374 100%)',
-            marginBottom: 20,
-            animation: 'pulse 4s ease-in-out infinite',
-          }} />
+          <ShihuAvatar size={64} style={{ marginBottom: 16, animation: 'pulse 4s ease-in-out infinite' }} />
           <div style={{ fontSize: 13, color: 'rgba(250,247,242,0.55)', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>
             {today}
           </div>
