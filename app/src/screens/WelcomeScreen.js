@@ -23,7 +23,7 @@ export default function WelcomeScreen({ onDone }) {
     }}>
       <div style={{ maxWidth: 400, width: '100%', textAlign: 'center' }}>
         <img
-          src={`${process.env.PUBLIC_URL}/icon.svg`}
+          src={`${process.env.PUBLIC_URL}/icon-512.png`}
           alt="惜惜的石虎"
           style={{ width: 110, height: 110, borderRadius: 28, marginBottom: 24, boxShadow: 'var(--shadow-md)' }}
         />

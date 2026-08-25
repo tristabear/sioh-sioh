@@ -8,37 +8,29 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="惜惜" />
     <meta name="description" content="惜惜你的心。台灣情緒調節工具。" />
-    <!-- Preload the weights rendered on first paint (welcome + home) so
+    <!-- Preload the one font file rendered on first paint (welcome + home) so
          font-display: optional's short budget is met and there's no
-         fallback→webfont swap flash. Paths must match the @font-face src
+         fallback→webfont swap flash. Path must match the @font-face src
          below exactly or the browser fetches the file twice. -->
-    <link rel="preload" href="/fonts/serif-tc-900.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/serif-tc-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/sans-tc-300.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/sans-tc-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jf-openhuninn-tc.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32.png" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
     <title>惜惜</title>
     <style>
-      /* Self-hosted TC fonts, Traditional-Chinese glyph subset only (no CDN,
-         no unused Cyrillic/Vietnamese/emoji chunks fontsource's full build
-         pulls in). font-display: optional means the browser either has the
-         file in time for first paint or quietly keeps the system font for
-         that load — never the mid-render swap `swap` does, which is what
-         caused the visible flash on mobile. */
-      @font-face { font-family: 'Noto Sans TC'; font-weight: 300; font-style: normal; font-display: optional; src: url('/fonts/sans-tc-300.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Sans TC'; font-weight: 400; font-style: normal; font-display: optional; src: url('/fonts/sans-tc-400.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Sans TC'; font-weight: 500; font-style: normal; font-display: optional; src: url('/fonts/sans-tc-500.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Sans TC'; font-weight: 700; font-style: normal; font-display: optional; src: url('/fonts/sans-tc-700.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Serif TC'; font-weight: 300; font-style: normal; font-display: optional; src: url('/fonts/serif-tc-300.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Serif TC'; font-weight: 400; font-style: normal; font-display: optional; src: url('/fonts/serif-tc-400.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Serif TC'; font-weight: 700; font-style: normal; font-display: optional; src: url('/fonts/serif-tc-700.woff2') format('woff2'); }
-      @font-face { font-family: 'Noto Serif TC'; font-weight: 900; font-style: normal; font-display: optional; src: url('/fonts/serif-tc-900.woff2') format('woff2'); }
+      /* Self-hosted app font (jf open 粉圓 / open-huninn, SIL OFL), subset to
+         only the Traditional-Chinese + Latin glyphs this app actually uses
+         (no CDN, no unused glyph ranges). It ships one weight, so bold text
+         relies on the browser's synthetic bold rather than a distinct file.
+         font-display: optional means the browser either has the file in
+         time for first paint or quietly keeps the system font for that
+         load — never the mid-render swap `swap` does, which is what caused
+         the visible flash on mobile. */
+      @font-face { font-family: 'JF Open Huninn'; font-weight: 400; font-style: normal; font-display: optional; src: url('/fonts/jf-openhuninn-tc.woff2') format('woff2'); }
 
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
-        font-family: 'Noto Serif TC', serif;
+        font-family: 'JF Open Huninn', serif;
         background: #faf7f2;
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior: none;

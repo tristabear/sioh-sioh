@@ -69,8 +69,9 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = Infinity) {
   ctx.fillText(line, x, cy);
 }
 
-// Face-only version of the app icon (public/icon.svg without the background),
-// stamped onto share cards. Canvas can't draw SVG markup directly, so it's
+// Face-only version of the ShihuBreathing illustration (hand-drawn, distinct
+// from the shihu-head-layer.png used for the app icon), stamped onto share
+// cards. Canvas can't draw SVG markup directly, so it's
 // loaded through an Image once and cached.
 const SHIHU_FACE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="100 26 268 236">
   <g>
@@ -150,27 +151,27 @@ export async function generateShareCard(session) {
   }
 
   ctx.fillStyle = '#faf7f2';
-  ctx.font = '700 32px "Noto Sans TC", sans-serif';
+  ctx.font = '700 32px "JF Open Huninn", sans-serif';
   ctx.fillText('惜惜 sioh-sioh', 60, 90);
 
   const dateStr = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
-  ctx.font = '300 24px "Noto Sans TC", sans-serif';
+  ctx.font = '300 24px "JF Open Huninn", sans-serif';
   ctx.fillStyle = 'rgba(250,247,242,0.7)';
   ctx.fillText(dateStr, 60, 132);
 
-  ctx.font = '700 22px "Noto Sans TC", sans-serif';
+  ctx.font = '700 22px "JF Open Huninn", sans-serif';
   ctx.fillStyle = 'rgba(250,247,242,0.85)';
   ctx.fillText(label, 60, 200);
 
   ctx.fillStyle = '#faf7f2';
   const emotionText = emotionWord?.word || '說不出名字的感受';
   const emotionFontSize = emotionText.length > 6 ? 64 : 104;
-  ctx.font = `900 ${emotionFontSize}px "Noto Serif TC", serif`;
+  ctx.font = `900 ${emotionFontSize}px "JF Open Huninn", serif`;
   wrapText(ctx, emotionText, 60, 350, W - 120, emotionFontSize, 1);
 
   let nextY = 440;
   if (candidateWords?.length === 2 && emotionWord) {
-    ctx.font = '300 26px "Noto Sans TC", sans-serif';
+    ctx.font = '300 26px "JF Open Huninn", sans-serif';
     ctx.fillStyle = 'rgba(250,247,242,0.85)';
     const journeyText = `你感受到了 ${candidateWords[0].word} 和 ${candidateWords[1].word}，你學會更精確地說出它：${emotionWord.word}`;
     wrapText(ctx, journeyText, 60, nextY, W - 120, 40, 3);
@@ -178,12 +179,12 @@ export async function generateShareCard(session) {
   }
 
   if (journalNote) {
-    ctx.font = '300 28px "Noto Sans TC", sans-serif';
+    ctx.font = '300 28px "JF Open Huninn", sans-serif';
     ctx.fillStyle = 'rgba(250,247,242,0.85)';
     wrapText(ctx, journalNote, 60, nextY, W - 120, 44, 6);
   }
 
-  ctx.font = '300 24px "Noto Sans TC", sans-serif';
+  ctx.font = '300 24px "JF Open Huninn", sans-serif';
   ctx.fillStyle = 'rgba(250,247,242,0.6)';
   wrapText(ctx, '今天，我練習停下來，看見並惜惜自己的感受。', 60, H - 90, 400, 36, 2);
 

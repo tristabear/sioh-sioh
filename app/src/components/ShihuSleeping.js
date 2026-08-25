@@ -1,85 +1,187 @@
 /* eslint-disable */
+import { motion, useReducedMotion } from 'framer-motion';
+import shihuBodyImg from '../assets/shihu-body-layer.png';
+import shihuHeadImg from '../assets/shihu-head-layer.png';
+import shihuPawsImg from '../assets/shihu-paws-layer.png';
 
-// Curled-up sleeping shihu for the sleep section. Same palette and style as
-// ShihuBreathing; the flank rises and falls via .shihu-sleep-body (index.css)
-// and the Zzz motes drift with .shihu-zzz.
-export default function ShihuSleeping({ style }) {
+// Container coordinate system == the body layer's native pixel box, so every
+// other layer can be positioned/sized against it with plain percentages.
+const BODY_W = 658;
+const BODY_H = 470;
+const pct = (px, axis) => `${(px / (axis === 'x' ? BODY_W : BODY_H)) * 100}%`;
+
+// Ambient (no phase prop) fallback: the ombre glow + body/chest breathe on a
+// slow 6s loop, same cadence the previous PNG version shipped with.
+const AMBIENT_DURATION = 6;
+const softBreath = [0.45, 0, 0.55, 1]; // custom easeInOutSine-ish curve
+
+// Phase-driven mode (RescueScreen-style Inhale/Hold/Exhale contract, matching
+// ShihuBreathing's phaseIndex/durationMs props): 0/1 inhale, 2 exhale, 3 hold.
+const PHASE_TARGETS = [
+  { bodyScale: 1.02, headRotate: -0.8, headY: 1 },
+  { bodyScale: 1.04, headRotate: -1.5, headY: 2 },
+  { bodyScale: 1.0, headRotate: 0, headY: 0 },
+  { bodyScale: 1.0, headRotate: 0, headY: 0 },
+];
+
+// Drift paths for the three "Zzz"s, floating up from near the top ear.
+// Sizes shrink and durations lengthen going outward, so they read as one
+// symbol dissolving upward rather than three synced clones.
+const Z_ITEMS = [
+  { size: 22, dx: 10, dy: -48, duration: 3.2, delay: 0 },
+  { size: 16, dx: 17, dy: -62, duration: 3.7, delay: 1.1 },
+  { size: 12, dx: 24, dy: -76, duration: 4.1, delay: 2.15 },
+];
+
+export default function ShihuSleeping({ style, phaseIndex, durationMs }) {
+  const reduceMotion = useReducedMotion();
+  const phaseDriven = phaseIndex != null;
+  const target = PHASE_TARGETS[phaseIndex] || PHASE_TARGETS[0];
+
+  const bodyAnimate = reduceMotion
+    ? undefined
+    : phaseDriven
+    ? { scale: target.bodyScale }
+    : { scale: [1, 1.04, 1] };
+  const bodyTransition = phaseDriven
+    ? { duration: (durationMs || 4000) / 1000, ease: softBreath }
+    : { duration: AMBIENT_DURATION, repeat: Infinity, repeatType: 'loop', ease: softBreath };
+
+  // Head lags a beat behind the body's breath so the drowsy tilt reads as a
+  // followthrough, not a synchronized twin motion.
+  const headAnimate = reduceMotion
+    ? undefined
+    : phaseDriven
+    ? { rotate: target.headRotate, y: target.headY }
+    : { rotate: [0, -1.5, 0], y: [0, 2, 0] };
+  const headTransition = phaseDriven
+    ? { duration: (durationMs || 4000) / 1000, ease: 'easeInOut', delay: 0.12 }
+    : { duration: AMBIENT_DURATION, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', delay: 0.35 };
+
+  const pawsAnimate = reduceMotion
+    ? undefined
+    : phaseDriven
+    ? { scale: 1 + (target.bodyScale - 1) * 0.5, y: -(target.bodyScale - 1) * 40 }
+    : { scale: [1, 1.02, 1], y: [0, -1, 0] };
+  const pawsTransition = phaseDriven
+    ? { duration: (durationMs || 4000) / 1000, ease: 'easeInOut' }
+    : { duration: AMBIENT_DURATION, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' };
+
+  // Ground-contact shadow: flattens + darkens as the body settles back down
+  // (exhale/contract), stretches + fades as it lifts on the inhale — the
+  // inverse of the body's own scale curve, on the same clock so they never
+  // drift out of sync.
+  const shadowStretch = phaseDriven ? Math.min(1, Math.max(0, (target.bodyScale - 1) / 0.04)) : null;
+  const shadowAnimate = reduceMotion
+    ? undefined
+    : phaseDriven
+    ? { width: `${60 + 9 * shadowStretch}%`, opacity: 1 - 0.5 * shadowStretch }
+    : { width: ['60%', '69%', '60%'], opacity: [1, 0.5, 1] };
+  const shadowTransition = phaseDriven
+    ? { duration: (durationMs || 4000) / 1000, ease: softBreath }
+    : { duration: AMBIENT_DURATION, repeat: Infinity, repeatType: 'loop', ease: softBreath };
+
   return (
-    <svg viewBox="0 0 460 300" width="100%" height="100%" style={{ display: 'block', overflow: 'visible', ...style }}>
-      {/* ground shadow */}
-      <ellipse cx="235" cy="280" rx="165" ry="17" fill="#000" opacity=".28" />
+    <div style={{ position: 'relative', width: '100%', aspectRatio: `${BODY_W} / ${BODY_H}`, ...style }}>
+      {/* Ground shadow — sits directly beneath the cat's base, breathing in sync with the body */}
+      <motion.div
+        aria-hidden="true"
+        animate={shadowAnimate}
+        transition={shadowTransition}
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: pct(368, 'y'),
+          width: '60%',
+          height: pct(38, 'y'),
+          transform: 'translateX(-50%)',
+          borderRadius: '50%',
+          background: 'rgba(0, 0, 0, 0.08)',
+          filter: 'blur(8px)',
+          zIndex: 0,
+        }}
+      />
 
-      {/* body (breathing) */}
-      <g className="shihu-sleep-body">
-        <ellipse cx="262" cy="192" rx="132" ry="86" fill="#d7a263" />
-        {/* rosette spots */}
-        <ellipse cx="270" cy="140" rx="13" ry="10" fill="#5c4329" opacity=".45" />
-        <ellipse cx="322" cy="164" rx="12" ry="9" fill="#5c4329" opacity=".45" />
-        <ellipse cx="348" cy="210" rx="12" ry="9" fill="#5c4329" opacity=".45" />
-        <ellipse cx="300" cy="230" rx="12" ry="9" fill="#5c4329" opacity=".45" />
-        <ellipse cx="240" cy="128" rx="11" ry="8" fill="#5c4329" opacity=".45" />
-        {/* cream flank patch */}
-        <ellipse cx="240" cy="248" rx="95" ry="34" fill="#f6ead2" opacity=".9" />
-      </g>
+      {/* Body — the curled chest/back, breathes with the main scale loop */}
+      <motion.img
+        src={shihuBodyImg}
+        alt=""
+        animate={bodyAnimate}
+        transition={bodyTransition}
+        style={{
+          position: 'absolute',
+          left: pct(78, 'x'),
+          top: pct(62, 'y'),
+          width: pct(436, 'x'),
+          height: 'auto',
+          transformOrigin: '50% 65%',
+          zIndex: 1,
+        }}
+      />
 
-      {/* tail curled around the front */}
-      <g>
-        <path d="M378 226 Q 402 268 330 280 Q 240 292 158 268" fill="none" stroke="#d7a263" strokeWidth="30" strokeLinecap="round" />
-        <path d="M378 226 Q 402 268 330 280 Q 240 292 158 268" fill="none" stroke="#5c4329" strokeWidth="30" strokeLinecap="butt" strokeDasharray="13 40" opacity=".75" />
-        <circle cx="158" cy="268" r="12" fill="#4f3a23" />
-      </g>
+      {/* Head — nested in the chest notch, drowsy tilt + bob lagging the body */}
+      <motion.img
+        src={shihuHeadImg}
+        alt="惜惜安穩地睡著了"
+        animate={headAnimate}
+        transition={headTransition}
+        style={{
+          position: 'absolute',
+          left: pct(0, 'x'),
+          top: pct(35, 'y'),
+          width: pct(339, 'x'),
+          height: 'auto',
+          transformOrigin: '50% 85%',
+          zIndex: 2,
+        }}
+      />
 
-      {/* head resting on paws */}
-      <g>
-        {/* ears */}
-        <path d="M108 132 Q 102 86 122 74 Q 138 86 154 116 Q 130 132 108 132 Z" fill="#d7a263" />
-        <path d="M120 120 Q 120 94 127 86 Q 136 96 142 114 Q 130 122 120 120 Z" fill="#e9b9a8" />
-        <path d="M108 132 Q 102 86 122 74 Q 128 82 132 92 Q 116 108 108 132 Z" fill="#4f3a23" opacity=".55" />
-        <path d="M160 112 Q 170 76 192 72 Q 200 90 196 122 Q 176 122 160 112 Z" fill="#d7a263" />
-        <path d="M170 106 Q 176 88 186 84 Q 190 96 188 112 Q 178 110 170 106 Z" fill="#e9b9a8" />
+      {/* Paws — topmost foreground layer, resting over the chin/chest boundary */}
+      <motion.img
+        src={shihuPawsImg}
+        alt=""
+        animate={pawsAnimate}
+        transition={pawsTransition}
+        style={{
+          position: 'absolute',
+          left: pct(88, 'x'),
+          top: pct(295, 'y'),
+          width: pct(216, 'x'),
+          height: 'auto',
+          transformOrigin: '50% 30%',
+          zIndex: 10,
+        }}
+      />
 
-        <circle cx="148" cy="172" r="60" fill="#d7a263" />
-
-        {/* forehead stripes */}
-        <path d="M146 118 Q 143 134 146 148 Q 149 134 146 118 Z" fill="#5c4329" opacity=".7" />
-        <path d="M130 122 Q 125 136 129 150 Q 134 136 132 124 Z" fill="#5c4329" opacity=".6" />
-        <path d="M162 122 Q 167 136 163 150 Q 158 136 160 124 Z" fill="#5c4329" opacity=".6" />
-
-        {/* muzzle */}
-        <ellipse cx="134" cy="204" rx="26" ry="19" fill="#f8efdc" />
-        <ellipse cx="164" cy="204" rx="26" ry="19" fill="#f8efdc" />
-
-        {/* closed eyes — content ︶ curves */}
-        <g stroke="#4a3526" strokeWidth="4.5" strokeLinecap="round" fill="none">
-          <path d="M108 178 Q 118 188 128 178" />
-          <path d="M164 178 Q 174 188 184 178" />
-        </g>
-
-        {/* nose + mouth */}
-        <path d="M141 192 Q 148 188 155 192 Q 152 202 148 204 Q 144 202 141 192 Z" fill="#e6928f" />
-        <path d="M148 204 Q 148 212 139 214" fill="none" stroke="#5c4329" strokeWidth="2.6" strokeLinecap="round" />
-
-        {/* whiskers */}
-        <g stroke="#fff7ea" strokeWidth="2" strokeLinecap="round" opacity=".7" fill="none">
-          <path d="M112 200 Q 88 196 68 192" />
-          <path d="M112 208 Q 86 210 66 212" />
-          <path d="M186 200 Q 208 196 226 194" />
-        </g>
-
-        {/* front paw tucked under the chin */}
-        <ellipse cx="176" cy="234" rx="34" ry="16" fill="#ecdcbf" />
-        <g stroke="#cdb792" strokeWidth="2" strokeLinecap="round" fill="none">
-          <path d="M168 228 L 167 240" />
-          <path d="M182 228 L 183 240" />
-        </g>
-      </g>
-
-      {/* Zzz */}
-      <g fill="#C8A579" fontFamily="Noto Serif TC, serif" fontWeight="900">
-        <text x="196" y="100" fontSize="30" className="shihu-zzz" style={{ animationDelay: '0s' }}>z</text>
-        <text x="224" y="72" fontSize="22" className="shihu-zzz" style={{ animationDelay: '-1.5s' }}>z</text>
-        <text x="248" y="50" fontSize="16" className="shihu-zzz" style={{ animationDelay: '-3s' }}>z</text>
-      </g>
-    </svg>
+      {/* Drifting "Zzz"s — rise from near the top ear in a gentle, staggered loop */}
+      {Z_ITEMS.map((z, i) => (
+        <motion.span
+          key={i}
+          aria-hidden="true"
+          animate={reduceMotion ? undefined : { opacity: [0, 0.85, 0], x: [0, z.dx * 0.6, z.dx], y: [0, z.dy * 0.6, z.dy] }}
+          transition={reduceMotion ? undefined : {
+            duration: z.duration,
+            delay: z.delay,
+            repeat: Infinity,
+            repeatType: 'loop',
+            ease: 'easeInOut',
+          }}
+          style={{
+            position: 'absolute',
+            left: pct(300, 'x'),
+            top: pct(50, 'y'),
+            fontSize: z.size,
+            fontWeight: 900,
+            color: '#f6ead2',
+            textShadow: '0 1px 3px rgba(76, 53, 30, 0.35)',
+            opacity: reduceMotion ? 0.5 : 0,
+            zIndex: 11,
+            pointerEvents: 'none',
+          }}
+        >
+          Z
+        </motion.span>
+      ))}
+    </div>
   );
 }

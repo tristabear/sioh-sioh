@@ -21,8 +21,8 @@
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 28px;
-  --font-serif: 'Noto Serif TC', serif;
-  --font-sans: 'Noto Sans TC', sans-serif;
+  --font-serif: 'JF Open Huninn', serif;
+  --font-sans: 'JF Open Huninn', sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -255,17 +255,6 @@ button {
   80% { opacity: .38; }
   100% { transform: translateY(-380px) translateX(18px); opacity: 0; }
 }
-@keyframes shihuSleepBreathe {
-  0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(1.015, 1.045); }
-}
-@keyframes shihuZzzFloat {
-  0% { opacity: 0; transform: translate(0, 8px) scale(.8); }
-  30% { opacity: .9; }
-  100% { opacity: 0; transform: translate(12px, -28px) scale(1.15); }
-}
-.shihu-sleep-body { transform-box: fill-box; transform-origin: 50% 100%; animation: shihuSleepBreathe 6s ease-in-out infinite; }
-.shihu-zzz { transform-box: fill-box; transform-origin: 50% 50%; animation: shihuZzzFloat 4.5s ease-in-out infinite; }
 .shihu-tail { transform-box: fill-box; transform-origin: 0% 100%; animation: shihuTailSway 6.5s ease-in-out infinite; }
 .shihu-ear-l { transform-box: fill-box; transform-origin: 50% 100%; animation: shihuEarLeft 6s ease-in-out infinite; }
 .shihu-ear-r { transform-box: fill-box; transform-origin: 50% 100%; animation: shihuEarRight 8s ease-in-out infinite; }
@@ -291,10 +280,7 @@ button {
   .shihu-ear-l,
   .shihu-ear-r,
   .shihu-eyes,
-  .shihu-mote,
-  .shihu-sleep-body,
-  .shihu-zzz { animation: none; }
-  .shihu-zzz { opacity: .6; }
+  .shihu-mote { animation: none; }
 }
 
 /* ── Tag / chip ── */
