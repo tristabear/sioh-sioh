@@ -26,12 +26,16 @@ const PHASE_TARGETS = [
 
 // Drift paths for the three "Zzz"s, floating up from near the top ear.
 // Sizes shrink and durations lengthen going outward, so they read as one
-// symbol dissolving upward rather than three synced clones.
+// symbol dissolving upward rather than three synced clones. dx/dy are in the
+// same BODY_W/BODY_H coordinate space as every other layer (via pct()) so the
+// drift scales with the rendered size instead of overshooting a small
+// container on narrow screens.
 const Z_ITEMS = [
-  { size: 22, dx: 10, dy: -48, duration: 3.2, delay: 0 },
-  { size: 16, dx: 17, dy: -62, duration: 3.7, delay: 1.1 },
-  { size: 12, dx: 24, dy: -76, duration: 4.1, delay: 2.15 },
+  { size: 22, dx: 14, dy: -34, duration: 3.2, delay: 0 },
+  { size: 16, dx: 22, dy: -46, duration: 3.7, delay: 1.1 },
+  { size: 12, dx: 30, dy: -58, duration: 4.1, delay: 2.15 },
 ];
+const Z_START = { x: 300, y: 50 };
 
 export default function ShihuSleeping({ style, phaseIndex, durationMs }) {
   const reduceMotion = useReducedMotion();
@@ -158,7 +162,11 @@ export default function ShihuSleeping({ style, phaseIndex, durationMs }) {
         <motion.span
           key={i}
           aria-hidden="true"
-          animate={reduceMotion ? undefined : { opacity: [0, 0.85, 0], x: [0, z.dx * 0.6, z.dx], y: [0, z.dy * 0.6, z.dy] }}
+          animate={reduceMotion ? undefined : {
+            opacity: [0, 0.85, 0],
+            left: [pct(Z_START.x, 'x'), pct(Z_START.x + z.dx * 0.6, 'x'), pct(Z_START.x + z.dx, 'x')],
+            top: [pct(Z_START.y, 'y'), pct(Z_START.y + z.dy * 0.6, 'y'), pct(Z_START.y + z.dy, 'y')],
+          }}
           transition={reduceMotion ? undefined : {
             duration: z.duration,
             delay: z.delay,
@@ -168,8 +176,8 @@ export default function ShihuSleeping({ style, phaseIndex, durationMs }) {
           }}
           style={{
             position: 'absolute',
-            left: pct(300, 'x'),
-            top: pct(50, 'y'),
+            left: pct(Z_START.x, 'x'),
+            top: pct(Z_START.y, 'y'),
             fontSize: z.size,
             fontWeight: 900,
             color: '#f6ead2',

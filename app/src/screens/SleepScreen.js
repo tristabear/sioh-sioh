@@ -85,14 +85,14 @@ export default function SleepScreen() {
       minHeight: '100dvh',
     }}>
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '52px 24px 0' }}>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: '#faf7f2', letterSpacing: 2, marginBottom: 6 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 900, color: '#faf7f2', letterSpacing: 2, lineHeight: 1.3, marginBottom: 10 }}>
           晚安，該休息了
         </h1>
-        <p style={{ fontSize: 13, color: 'rgba(250,247,242,0.5)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.8, marginBottom: 4 }}>
+        <p style={{ fontSize: 13, color: 'rgba(250,247,242,0.5)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7 }}>
           讓聲音陪你，慢慢沉進今晚的睡眠。
         </p>
 
-        <div style={{ width: '78%', maxWidth: 330, margin: '4px auto 8px' }}>
+        <div style={{ width: '78%', maxWidth: 330, margin: '28px auto 20px' }}>
           <ShihuSleeping />
         </div>
 
@@ -117,7 +117,7 @@ export default function SleepScreen() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div style={{ fontSize: 26 }}>{track.icon}</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: '#faf7f2', fontFamily: 'var(--font-serif)', marginBottom: 2 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#faf7f2', fontFamily: 'var(--font-serif)', lineHeight: 1.4, marginBottom: 4 }}>
                       {track.title}
                       {ready === false && (
                         <span style={{
@@ -129,7 +129,7 @@ export default function SleepScreen() {
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 12, color: 'rgba(250,247,242,0.5)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
+                    <div style={{ fontSize: 12, color: 'rgba(250,247,242,0.5)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.5 }}>
                       {track.sub}
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export default function SleepScreen() {
           })}
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: 12, color: 'rgba(250,247,242,0.35)', fontFamily: 'var(--font-sans)', fontWeight: 300, paddingBottom: 24 }}>
+        <p style={{ textAlign: 'center', fontSize: 12, color: 'rgba(250,247,242,0.35)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.7, marginTop: 4, paddingBottom: 24 }}>
           建議調暗螢幕、放下手機，讓聲音陪著你就好 🌙
         </p>
       </div>
