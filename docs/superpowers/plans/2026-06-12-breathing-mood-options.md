@@ -110,6 +110,7 @@ git commit -m "Add breathing animation keyframes for mood options"
 
 In `app/src/screens/AffectGridScreen.js`, replace the `QUADRANTS.map` block (currently lines 40-62):
 
+{% raw %}
 ```jsx
 {QUADRANTS.map((q, i) => {
   const isSel = selected?.id === q.id;
@@ -142,6 +143,7 @@ In `app/src/screens/AffectGridScreen.js`, replace the `QUADRANTS.map` block (cur
   );
 })}
 ```
+{% endraw %}
 
 Notes for the implementer:
 - `'--del'` and `'--glow'` are CSS custom properties — React passes them through in the `style` object as-is.
@@ -213,6 +215,7 @@ nodes.push({
 
 In the render, the word map currently destructures `({ word: w, color, size, x, y })`. Change it to also take the new fields, add the `className`, and add the CSS variables to the style. Replace the existing word `<div>` (the whole `words.map` body, ~lines 287-327) with:
 
+{% raw %}
 ```jsx
 {words.map(({ word: w, color, size, x, y, breatheDur, breatheDel }) => {
   const isSel = selected.some(s => s.id === w.id);
@@ -261,6 +264,7 @@ In the render, the word map currently destructures `({ word: w, color, size, x, 
   );
 })}
 ```
+{% endraw %}
 
 Notes for the implementer:
 - The only changes from the current code are: the two new destructured fields, the `className`, and the four `--*` variables. Everything else is identical — do not drop the fog `opacity`, pan-disable logic, or the font-size transition.
