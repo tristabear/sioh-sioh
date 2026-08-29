@@ -35,7 +35,7 @@ export default function PrivacyScreen() {
         <button onClick={() => navigate(-1)} style={{ fontSize: 14, color: 'var(--muted)', fontFamily: 'var(--font-sans)', marginBottom: 20, padding: 0 }}>
           ← 返回
         </button>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--forest)', marginBottom: 6 }}>隱私權政策</h1>
+        <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--forest)', marginBottom: 8 }}>隱私權政策</h1>
         <p style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', marginBottom: 24 }}>
           更新日期：2026 年 7 月 10 日
         </p>

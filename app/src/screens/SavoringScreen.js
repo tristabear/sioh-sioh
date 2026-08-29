@@ -132,8 +132,8 @@ export default function SavoringScreen() {
                 onClick={() => setSelectedStrategy(selectedStrategy === s.id ? null : s.id)}
               >
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 2 }}>{s.label}</div>
-                  <div style={{ fontSize: 12, fontFamily: 'var(--font-sans)', fontWeight: 300, opacity: 0.75 }}>{s.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 5 }}>{s.label}</div>
+                  <div style={{ fontSize: 12, fontFamily: 'var(--font-sans)', fontWeight: 300, opacity: 0.75, lineHeight: 1.5 }}>{s.desc}</div>
                 </div>
               </button>
             ))}

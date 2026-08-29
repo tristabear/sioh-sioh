@@ -28,7 +28,7 @@ export default function HistoryScreen() {
   return (
     <div className="screen" style={{ padding: '52px 0 100px' }}>
       <div style={{ padding: '0 24px 24px' }}>
-        <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--forest)', marginBottom: 4 }}>練習記錄</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--forest)', marginBottom: 8 }}>練習記錄</h1>
         <p style={{ fontSize: 13, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>共 {history.length} 次練習</p>
       </div>
 
@@ -74,7 +74,7 @@ function EntryCard({ entry, index }) {
           <div style={{ fontSize: 16, fontWeight: 700 }}>
             {entry.emotionWord?.word || '無命名'}
           </div>
-          <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textAlign: 'right' }}>
+          <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)', textAlign: 'right', lineHeight: 1.5 }}>
             {date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}<br />
             {date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}
           </div>

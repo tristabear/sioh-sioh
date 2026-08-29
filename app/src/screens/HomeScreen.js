@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { getQuadrantInfo } from '../utils/media';
-import ShihuAvatar from '../components/ShihuAvatar';
+import shihuHeadImg from '../assets/shihu-head-layer.png';
 
 export default function HomeScreen() {
   const navigate = useNavigate();
@@ -21,10 +21,10 @@ export default function HomeScreen() {
     >
       <div style={{ fontSize: 36 }}>🌙</div>
       <div>
-        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>
+        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 5 }}>
           {isNight ? '該休息了' : '睡眠'}
         </div>
-        <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
+        <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.5 }}>
           {isNight ? '讓聲音陪你，慢慢沉進今晚的睡眠' : '放鬆、呼吸與睡前故事，陪你入睡'}
         </div>
       </div>
@@ -53,8 +53,12 @@ export default function HomeScreen() {
           background: 'rgba(58,107,126,0.15)',
         }} />
         {/* Inner content constrained to 480px */}
-        <div style={{ maxWidth: 480, margin: '0 auto', padding: '56px 28px 36px', position: 'relative', zIndex: 1 }}>
-          <ShihuAvatar size={64} style={{ marginBottom: 16, animation: 'pulse 4s ease-in-out infinite' }} />
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '56px 28px 36px', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+          <img
+            src={shihuHeadImg}
+            alt="惜惜"
+            style={{ width: 72, height: 'auto', marginBottom: 16, transform: 'rotate(10deg)' }}
+          />
           <div style={{ fontSize: 13, color: 'rgba(250,247,242,0.55)', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>
             {today}
           </div>
@@ -89,8 +93,8 @@ export default function HomeScreen() {
         >
           <div style={{ fontSize: 36 }}>🌬️</div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>急須呼吸</div>
-            <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 5 }}>急須呼吸</div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.5 }}>
               壓力很大？先來一分鐘的生理嘆息
             </div>
           </div>
@@ -107,7 +111,7 @@ export default function HomeScreen() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <MoodDot coord={history[0].affectCoord} size={40} />
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 5 }}>
                   {history[0].emotionWord?.word || '已完成練習'}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--light-muted)', fontFamily: 'var(--font-sans)' }}>

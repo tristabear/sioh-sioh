@@ -40,7 +40,7 @@ export default function SupportScreen() {
                 {line.tel}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 5 }}>
                   {line.name}
                   <span style={{
                     fontSize: 11, fontWeight: 500, fontFamily: 'var(--font-sans)',
@@ -50,7 +50,7 @@ export default function SupportScreen() {
                     {line.badge}
                   </span>
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300 }}>
+                <div style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontWeight: 300, lineHeight: 1.5 }}>
                   {line.desc}
                 </div>
               </div>

@@ -106,10 +106,10 @@ export default function RescueScreen() {
                     transition: 'all 0.18s',
                   }}
                 >
-                  <div style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-sans)', marginBottom: 2 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-sans)', marginBottom: 5 }}>
                     {p.label}
                   </div>
-                  <div style={{ fontSize: 12, fontWeight: 300, fontFamily: 'var(--font-sans)', color: isSel ? 'rgba(255,255,255,0.85)' : 'var(--muted)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 300, fontFamily: 'var(--font-sans)', color: isSel ? 'rgba(255,255,255,0.85)' : 'var(--muted)', lineHeight: 1.5 }}>
                     {p.sub}
                   </div>
                 </button>
@@ -202,7 +202,7 @@ export default function RescueScreen() {
           opacity: isInhalePhase ? 0 : 1,
           transition: `transform ${phase.duration}ms ease-in-out, opacity ${phase.duration}ms ease-in-out`,
         }} />
-        <ShihuBreathing phaseIndex={phaseIdx} durationMs={phase.duration} style={{ position: 'relative', width: '92%', height: '92%' }} />
+        <ShihuBreathing phaseIndex={phaseIdx} durationMs={phase.duration} style={{ position: 'relative', width: '92%' }} />
       </div>
 
       <div style={{ textAlign: 'center', marginBottom: 24 }}>
